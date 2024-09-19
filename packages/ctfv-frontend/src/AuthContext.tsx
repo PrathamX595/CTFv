@@ -3,7 +3,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 interface User {
   id: string;
   email: string;
-  name: string;
+  username: string;
+  isAdmin: boolean;
 }
 
 interface AuthContextType {
@@ -32,6 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const token = localStorage.getItem("token");
     if (token) {
       setUser(JSON.parse(localStorage.getItem("user") || "null"));
+      console.log(JSON.parse(localStorage.getItem("user") || "null"));
     }
   }, []);
 
@@ -51,11 +53,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (username: string, email: string, password: string) => {
     const response = await fetch("http://localhost:8787/api/auth/register", {
       method: "POST",
+      // TODO: Remove isAdmin from the registration form
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ username, email, password, isAdmin: false }),
     });
     const data = await response.json();
     if (response.ok) {

@@ -31,19 +31,44 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           Teams
         </Link>
-        <Link
+        {/* <Link
           to="/challenges"
           className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
         >
           Challenges
-        </Link>
+        </Link> */}
         <Link
           to="/scoreboard"
           className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
         >
           Scoreboard
         </Link>
+
+        {user?.isAdmin === true ? (
+          <>
+            <Link
+              to="/admin/dashboard"
+              className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+            >
+              Admin Dashboard
+            </Link>
+            <Link
+              to="/admin/challenges"
+              className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+            >
+              Manage Challenges
+            </Link>
+          </>
+        ) : (
+          <Link
+            to="/challenges"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+          >
+            Challenges
+          </Link>
+        )}
       </div>
+
       <div className="flex items-center space-x-4">
         {user ? (
           <div className="flex items-center space-x-4">
@@ -56,7 +81,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Button
               variant="outline"
               onClick={logout}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 dark:text-zinc-300"
             >
               <LogOut size={20} />
               <span>Logout</span>
@@ -65,19 +90,20 @@ export const Navbar: React.FC<NavbarProps> = ({
         ) : (
           <div className="flex items-center space-x-2">
             <Link to="/register">
-              <Button variant="outline" className="flex items-center space-x-2">
+              <Button variant="outline" className="flex items-center space-x-2 dark:text-zinc-300">
                 <UserRoundPlus size={20} />
                 <span>Register</span>
               </Button>
             </Link>
             <Link to="/login">
-              <Button variant="outline" className="flex items-center space-x-2">
+              <Button variant="outline" className="flex items-center space-x-2 dark:text-zinc-300">
                 <LogIn size={20} />
                 <span>Login</span>
               </Button>
             </Link>
           </div>
         )}
+
         <Button
           variant="ghost"
           size="icon"

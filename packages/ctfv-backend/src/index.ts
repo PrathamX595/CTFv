@@ -39,11 +39,23 @@ export const authMiddleware: MiddlewareHandler<{Bindings:Bindings, Variables:Var
   }
 };
 
+export const adminMiddleware: MiddlewareHandler<{ Bindings: Bindings, Variables: Variables }> = async (c: Context, next) => {
+  const jwtPayload = c.get('jwtPayload');
+  
+  if (!jwtPayload || !jwtPayload.isAdmin) {
+    return c.json({ error: "Access denied: Admin Only" }, 403);
+  }
+
+  await next();
+};
+
+
 app.post("/api/auth/register", async (c) => {
   try {
     const db = getDB(c);
     const { email, password, username, isAdmin } = await c.req.json();
-    
+
+    // TODO: Remove isAdmin from the registration form
     if (typeof isAdmin !== 'boolean') {
       return c.json({ error: "isAdmin must be boolean" }, 400);
     }
@@ -80,7 +92,7 @@ app.post("/api/auth/register", async (c) => {
         email: newUser.email, 
         username: newUser.username ,
         isAdmin: newUser.isAdmin
-      } 
+      }
     });
   } catch (error) {
     console.error("Error in /api/auth/register:", error);
@@ -102,7 +114,7 @@ app.post("/api/auth/login", async (c) => {
 
   const token = await sign({ userId: user.id }, c.env.AUTH_SECRET);
 
-  return c.json({ token, user: { id: user.id, email: user.email, username: user.username } });
+  return c.json({ token, user: { id: user.id, email: user.email, username: user.username, isAdmin: user.isAdmin } });
 });
 
 app.get("/api/users", async (c) => {

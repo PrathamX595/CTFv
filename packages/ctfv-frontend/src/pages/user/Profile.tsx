@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 
-import { useAuth } from "../AuthContext";
-import { Button } from "../components/ui/button";
+import { useAuth } from "../../AuthContext";
+import { Button } from "../../components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
-import { Input } from "../components/ui/input";
+} from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
 
 interface UserProfile {
   id: string;
-  name: string;
+  username: string;
   email: string;
   rollNo?: string;
   instituteName?: string;
@@ -97,9 +97,9 @@ export const Profile: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Name
+              Username
             </label>
-            <Input value={profile.name} disabled />
+            <Input value={profile.username} disabled />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
