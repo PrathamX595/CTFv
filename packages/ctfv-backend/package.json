@@ -7,7 +7,8 @@
     "generate": "drizzle-kit generate",
     "migration:local": "wrangler d1 migrations apply ctfV-db --local",
     "migration:remote": "wrangler d1 migrations apply ctfV-db --remote",
-    "clean": "rm -rf .wrangler drizzle"
+    "clean": "rm -rf .wrangler",
+    "clean-migrations": "rm -rf drizzle"
   },
   "dependencies": {
     "@auth/core": "^0.35.0",

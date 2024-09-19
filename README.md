@@ -9,3 +9,5 @@ The repository is in a mono-repo format. The packages directory contains the two
 - And then in `packages/ctfv-backend`, add the .dev.vars file (copy it from the .dev.vars.example).
 
 - Then from the root directory, run `bun run dev` to start both the backend and frontend.
+
+- Periodically, you may need to run `bun run migration:local` to update the database schema, and also `bun run clean` to reset the database.
