@@ -16,10 +16,12 @@ import { Users } from "./pages/user/Users";
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
+  const theme = localStorage.getItem("theme") || "light";
+  const [isDarkMode, setIsDarkMode] = React.useState(theme === "dark");
 
   const toggleDarkMode = () => {
     setIsDarkMode((prevMode) => !prevMode);
+    localStorage.setItem("theme", isDarkMode ? "light" : "dark");
   };
 
   return (
