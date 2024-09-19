@@ -1,4 +1,4 @@
-import { Hono, Context } from "hono";
+import { Hono, Context, MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
@@ -6,6 +6,7 @@ import { sign, verify, JwtVariables } from "hono/jwt";
 import bcrypt from "bcryptjs";
 import * as schema from "./db/schema";
 import { Bindings } from "../env";
+import { logger } from "hono/logger";
 
 type Variables = JwtVariables
 
@@ -18,10 +19,11 @@ app.use(
     credentials: true,
   })
 );
+app.use(logger())
 
 const getDB = (c: Context) => drizzle(c.env.DATABASE, { schema });
 
-const authMiddleware = async (c: Context, next) => {
+const authMiddleware: MiddlewareHandler<{Bindings:Bindings, Variables:Variables}> = async (c: Context, next) => {
   const authHeader = c.req.header("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return c.json({ error: "Unauthorized" }, 401);
@@ -39,7 +41,7 @@ const authMiddleware = async (c: Context, next) => {
 
 app.post("/api/auth/register", async (c) => {
   const db = getDB(c);
-  const { email, password, username } = await c.req.json();
+  const { email, password, username, isAdmin } = await c.req.json(); //isAdmin should be 0 or 1 only
 
   const existingUser = await db.query.users.findFirst({
     where: eq(schema.users.email, email),
@@ -55,6 +57,7 @@ app.post("/api/auth/register", async (c) => {
     email,
     password: hashedPassword,
     username,
+    isAdmin //isAdmin is expected to be 0 or 1 only
   }).returning().get();
 
   const token = await sign({ userId: newUser.id }, c.env.AUTH_SECRET);
@@ -88,6 +91,7 @@ app.get("/api/users", async (c) => {
       email: true,
       rollNo: true,
       instituteName: true,
+      isAdmin: true
     },
   });
   return c.json(users);
@@ -105,6 +109,7 @@ app.get("/api/users/:id", authMiddleware, async (c) => {
       email: true,
       rollNo: true,
       instituteName: true,
+      isAdmin: true
     },
   });
 

@@ -9,6 +9,7 @@ export const users = sqliteTable("user", {
   instituteName: text("instituteName"),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
+  isAdmin: integer("isAdmin", {mode: "boolean"}).notNull().default(false)
 });
 
 // Keep other tables (accounts, sessions, verificationTokens, authenticators) as they were
