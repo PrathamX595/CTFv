@@ -23,7 +23,7 @@ app.use(logger())
 
 const getDB = (c: Context) => drizzle(c.env.DATABASE, { schema });
 
-const authMiddleware: MiddlewareHandler<{Bindings:Bindings, Variables:Variables}> = async (c: Context, next) => {
+export const authMiddleware: MiddlewareHandler<{Bindings:Bindings, Variables:Variables}> = async (c: Context, next) => {
   const authHeader = c.req.header("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return c.json({ error: "Unauthorized" }, 401);
@@ -40,29 +40,52 @@ const authMiddleware: MiddlewareHandler<{Bindings:Bindings, Variables:Variables}
 };
 
 app.post("/api/auth/register", async (c) => {
-  const db = getDB(c);
-  const { email, password, username, isAdmin } = await c.req.json(); //isAdmin should be 0 or 1 only
+  try {
+    const db = getDB(c);
+    const { email, password, username, isAdmin } = await c.req.json();
+    
+    if (typeof isAdmin !== 'boolean') {
+      return c.json({ error: "isAdmin must be boolean" }, 400);
+    }
 
-  const existingUser = await db.query.users.findFirst({
-    where: eq(schema.users.email, email),
-  });
+    const existingUser = await db.query.users.findFirst({
+      where: eq(schema.users.email, email),
+    });
 
-  if (existingUser) {
-    return c.json({ error: "User already exists" }, 400);
+    if (existingUser) {
+      return c.json({ error: "User already exists" }, 400);
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await db.insert(schema.users).values({
+      email,
+      password: hashedPassword,
+      username,
+      isAdmin
+    }).returning().get();
+
+    // Check if AUTH_SECRET is defined
+    if (!c.env.AUTH_SECRET) {
+      console.error("AUTH_SECRET is not defined in the environment");
+      return c.json({ error: "Internal server error" }, 500);
+    }
+
+    const token = await sign({ userId: newUser.id }, c.env.AUTH_SECRET);
+
+    return c.json({ 
+      token, 
+      user: { 
+        id: newUser.id, 
+        email: newUser.email, 
+        username: newUser.username ,
+        isAdmin: newUser.isAdmin
+      } 
+    });
+  } catch (error) {
+    console.error("Error in /api/auth/register:", error);
+    return c.json({ error: "Internal server error" }, 500);
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const newUser = await db.insert(schema.users).values({
-    email,
-    password: hashedPassword,
-    username,
-    isAdmin //isAdmin is expected to be 0 or 1 only
-  }).returning().get();
-
-  const token = await sign({ userId: newUser.id }, c.env.AUTH_SECRET);
-
-  return c.json({ token, user: { id: newUser.id, email: newUser.email, username: newUser.username } });
 });
 
 app.post("/api/auth/login", async (c) => {

@@ -12,4 +12,13 @@ export const users = sqliteTable("user", {
   isAdmin: integer("isAdmin", {mode: "boolean"}).notNull().default(false)
 });
 
+export const challenges = sqliteTable("challenges", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  url: text("url").notNull(),
+  points: integer("points").notNull(),
+  category: text("category", { enum: ["reversing", "osint", "pwn", "web", "forensics", "crypto", "stego"] }).notNull()
+});
+
 // Keep other tables (accounts, sessions, verificationTokens, authenticators) as they were
