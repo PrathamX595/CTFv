@@ -26,6 +26,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           CTFv
         </Link>
         <Link
+          to="/users"
+          className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+        >
+          Users
+        </Link>
+        <Link
           to="/teams"
           className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
         >
@@ -38,10 +44,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           Challenges
         </Link> */}
         <Link
-          to="/scoreboard"
+          to="/leaderboard"
           className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
         >
-          Scoreboard
+          Leaderboard
         </Link>
 
         {user?.isAdmin === true ? (
@@ -90,13 +96,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         ) : (
           <div className="flex items-center space-x-2">
             <Link to="/register">
-              <Button variant="outline" className="flex items-center space-x-2 dark:text-zinc-300">
+              <Button
+                variant="outline"
+                className="flex items-center space-x-2 dark:text-zinc-300"
+              >
                 <UserRoundPlus size={20} />
                 <span>Register</span>
               </Button>
             </Link>
             <Link to="/login">
-              <Button variant="outline" className="flex items-center space-x-2 dark:text-zinc-300">
+              <Button
+                variant="outline"
+                className="flex items-center space-x-2 dark:text-zinc-300"
+              >
                 <LogIn size={20} />
                 <span>Login</span>
               </Button>

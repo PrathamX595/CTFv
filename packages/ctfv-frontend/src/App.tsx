@@ -9,9 +9,10 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { ChallengeList } from "./pages/admin/ChallengeList";
 import { Challenges } from "./pages/user/Challenges";
 import { Home } from "./pages/user/Home";
+import { LeaderBoard } from "./pages/user/LeaderBoard";
 import { Profile } from "./pages/user/Profile";
-import { Scoreboard } from "./pages/user/Scoreboard";
 import { Teams } from "./pages/user/Teams";
+import { Users } from "./pages/user/Users";
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();
@@ -29,9 +30,10 @@ const AppContent: React.FC = () => {
           <div className="container mx-auto p-4">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/users" element={<Users />} />
               <Route path="/teams" element={<Teams />} />
               <Route path="/challenges" element={<Challenges />} />
-              <Route path="/scoreboard" element={<Scoreboard />} />
+              <Route path="/leaderboard" element={<LeaderBoard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />

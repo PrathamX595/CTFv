@@ -1,29 +1,33 @@
-import { Hono, Context, MiddlewareHandler } from "hono";
-import { cors } from "hono/cors";
-import { drizzle } from "drizzle-orm/d1";
-import { eq } from "drizzle-orm";
-import { sign, verify, JwtVariables } from "hono/jwt";
 import bcrypt from "bcryptjs";
-import * as schema from "./db/schema";
-import { Bindings } from "../env";
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/d1";
+import { Context, Hono, MiddlewareHandler } from "hono";
+import { cors } from "hono/cors";
+import { JwtVariables, sign, verify } from "hono/jwt";
 import { logger } from "hono/logger";
 
-type Variables = JwtVariables
+import { Bindings } from "../env";
+import * as schema from "./db/schema";
 
-const app = new Hono<{ Bindings: Bindings, Variables: Variables }>();
+type Variables = JwtVariables;
+
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 app.use(
   "*",
   cors({
     origin: (origin) => origin,
     credentials: true,
-  })
+  }),
 );
-app.use(logger())
+app.use(logger());
 
 const getDB = (c: Context) => drizzle(c.env.DATABASE, { schema });
 
-export const authMiddleware: MiddlewareHandler<{Bindings:Bindings, Variables:Variables}> = async (c: Context, next) => {
+export const authMiddleware: MiddlewareHandler<{
+  Bindings: Bindings;
+  Variables: Variables;
+}> = async (c: Context, next) => {
   const authHeader = c.req.header("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return c.json({ error: "Unauthorized" }, 401);
@@ -32,16 +36,19 @@ export const authMiddleware: MiddlewareHandler<{Bindings:Bindings, Variables:Var
   const token = authHeader.split(" ")[1];
   try {
     const payload = await verify(token, c.env.AUTH_SECRET);
-    c.set('jwtPayload', payload);
+    c.set("jwtPayload", payload);
     await next();
   } catch (error) {
     return c.json({ error: "Invalid token" }, 401);
   }
 };
 
-export const adminMiddleware: MiddlewareHandler<{ Bindings: Bindings, Variables: Variables }> = async (c: Context, next) => {
-  const jwtPayload = c.get('jwtPayload');
-  
+export const adminMiddleware: MiddlewareHandler<{
+  Bindings: Bindings;
+  Variables: Variables;
+}> = async (c: Context, next) => {
+  const jwtPayload = c.get("jwtPayload");
+
   if (!jwtPayload || !jwtPayload.isAdmin) {
     return c.json({ error: "Access denied: Admin Only" }, 403);
   }
@@ -49,14 +56,13 @@ export const adminMiddleware: MiddlewareHandler<{ Bindings: Bindings, Variables:
   await next();
 };
 
-
 app.post("/api/auth/register", async (c) => {
   try {
     const db = getDB(c);
     const { email, password, username, isAdmin } = await c.req.json();
 
     // TODO: Remove isAdmin from the registration form
-    if (typeof isAdmin !== 'boolean') {
+    if (typeof isAdmin !== "boolean") {
       return c.json({ error: "isAdmin must be boolean" }, 400);
     }
 
@@ -70,12 +76,16 @@ app.post("/api/auth/register", async (c) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await db.insert(schema.users).values({
-      email,
-      password: hashedPassword,
-      username,
-      isAdmin
-    }).returning().get();
+    const newUser = await db
+      .insert(schema.users)
+      .values({
+        email,
+        password: hashedPassword,
+        username,
+        isAdmin,
+      })
+      .returning()
+      .get();
 
     // Check if AUTH_SECRET is defined
     if (!c.env.AUTH_SECRET) {
@@ -85,14 +95,14 @@ app.post("/api/auth/register", async (c) => {
 
     const token = await sign({ userId: newUser.id }, c.env.AUTH_SECRET);
 
-    return c.json({ 
-      token, 
-      user: { 
-        id: newUser.id, 
-        email: newUser.email, 
-        username: newUser.username ,
-        isAdmin: newUser.isAdmin
-      }
+    return c.json({
+      token,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        username: newUser.username,
+        isAdmin: newUser.isAdmin,
+      },
     });
   } catch (error) {
     console.error("Error in /api/auth/register:", error);
@@ -108,13 +118,21 @@ app.post("/api/auth/login", async (c) => {
     where: eq(schema.users.email, email),
   });
 
-  if (!user || !await bcrypt.compare(password, user.password)) {
+  if (!user || !(await bcrypt.compare(password, user.password))) {
     return c.json({ error: "Invalid credentials" }, 401);
   }
 
   const token = await sign({ userId: user.id }, c.env.AUTH_SECRET);
 
-  return c.json({ token, user: { id: user.id, email: user.email, username: user.username, isAdmin: user.isAdmin } });
+  return c.json({
+    token,
+    user: {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      isAdmin: user.isAdmin,
+    },
+  });
 });
 
 app.get("/api/users", async (c) => {
@@ -126,7 +144,10 @@ app.get("/api/users", async (c) => {
       email: true,
       rollNo: true,
       instituteName: true,
-      isAdmin: true
+      website: true,
+      affiliation: true,
+      country: true,
+      isAdmin: true,
     },
   });
   return c.json(users);
@@ -144,7 +165,10 @@ app.get("/api/users/:id", authMiddleware, async (c) => {
       email: true,
       rollNo: true,
       instituteName: true,
-      isAdmin: true
+      website: true,
+      affiliation: true,
+      country: true,
+      isAdmin: true,
     },
   });
 
@@ -159,15 +183,15 @@ app.get("/api/users/:id", authMiddleware, async (c) => {
 app.put("/api/users/:id", authMiddleware, async (c) => {
   const db = getDB(c);
   const userId = c.req.param("id");
-  const { rollNo, instituteName } = await c.req.json();
+  const { rollNo, instituteName, website, affiliation, country } = await c.req.json();
 
-  if (userId !== c.get('jwtPayload').userId) {
+  if (userId !== c.get("jwtPayload").userId) {
     return c.json({ error: "Unauthorized" }, 403);
   }
 
   const updatedUser = await db
     .update(schema.users)
-    .set({ rollNo, instituteName })
+    .set({ rollNo, instituteName, website, affiliation, country })
     .where(eq(schema.users.id, userId))
     .returning({
       id: schema.users.id,
@@ -175,6 +199,9 @@ app.put("/api/users/:id", authMiddleware, async (c) => {
       email: schema.users.email,
       rollNo: schema.users.rollNo,
       instituteName: schema.users.instituteName,
+      website: schema.users.website,
+      affiliation: schema.users.affiliation,
+      country: schema.users.country,
     });
 
   return c.json(updatedUser[0]);

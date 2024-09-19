@@ -16,6 +16,9 @@ interface UserProfile {
   email: string;
   rollNo?: string;
   instituteName?: string;
+  website?: string;
+  affiliation?: string;
+  country?: string;
 }
 
 export const Profile: React.FC = () => {
@@ -23,6 +26,9 @@ export const Profile: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [rollNo, setRollNo] = useState("");
   const [instituteName, setInstituteName] = useState("");
+  const [website, setWebsite] = useState("");
+  const [affiliation, setAffiliation] = useState("");
+  const [country, setCountry] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -42,6 +48,10 @@ export const Profile: React.FC = () => {
             setProfile(data);
             setRollNo(data.rollNo || "");
             setInstituteName(data.instituteName || "");
+            setWebsite(data.website || "");
+            setAffiliation(data.affiliation || "");
+            setCountry(data.country || "");
+            console.log(data);
           } else {
             console.error("Failed to fetch profile");
           }
@@ -66,7 +76,13 @@ export const Profile: React.FC = () => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            body: JSON.stringify({ rollNo, instituteName }),
+            body: JSON.stringify({
+              rollNo,
+              instituteName,
+              website,
+              affiliation,
+              country,
+            }),
           },
         );
         if (response.ok) {
@@ -133,6 +149,48 @@ export const Profile: React.FC = () => {
               value={instituteName}
               onChange={(e) => setInstituteName(e.target.value)}
               placeholder="Enter your institute name"
+            />
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="websiteName"
+              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            >
+              Website (optional)
+            </label>
+            <Input
+              id="websiteName"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              placeholder="Enter your website"
+            />
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="affiliationName"
+              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            >
+              Affiliation (optional)
+            </label>
+            <Input
+              id="affiliationName"
+              value={affiliation}
+              onChange={(e) => setAffiliation(e.target.value)}
+              placeholder="Enter your affiliation"
+            />
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="countryName"
+              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            >
+              Country (optional)
+            </label>
+            <Input
+              id="countryName"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              placeholder="Enter your country"
             />
           </div>
           <Button type="submit" className="w-full">
