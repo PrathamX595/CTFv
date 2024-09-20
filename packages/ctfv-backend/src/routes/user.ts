@@ -49,7 +49,10 @@ userRouter.post("/auth/register", async (c) => {
       return c.json({ error: "Internal server error" }, 500);
     }
 
-    const token = await sign({ userId: newUser.id }, c.env.AUTH_SECRET);
+    const token = await sign(
+      { userId: newUser.id, isAdmin: newUser.isAdmin },
+      c.env.AUTH_SECRET,
+    );
 
     return c.json({
       token,
@@ -78,7 +81,10 @@ userRouter.post("/auth/login", async (c) => {
     return c.json({ error: "Invalid credentials" }, 401);
   }
 
-  const token = await sign({ userId: user.id }, c.env.AUTH_SECRET);
+  const token = await sign(
+    { userId: user.id, isAdmin: user.isAdmin },
+    c.env.AUTH_SECRET,
+  );
 
   return c.json({
     token,
@@ -111,29 +117,28 @@ userRouter.get("/", async (c) => {
 
 // Get user profile
 userRouter.get("/:id", authMiddleware, async (c) => {
-    const db = getDB(c);
-    const userId = c.req.param("id");
-    const user = await db.query.users.findFirst({
-        where: eq(schema.users.id, userId),
-        columns: {
-        id: true,
-        username: true,
-        email: true,
-        rollNo: true,
-        instituteName: true,
-        website: true,
-        affiliation: true,
-        country: true,
-        isAdmin: true,
-        },
-    });
+  const db = getDB(c);
+  const userId = c.req.param("id");
+  const user = await db.query.users.findFirst({
+    where: eq(schema.users.id, userId),
+    columns: {
+      id: true,
+      username: true,
+      email: true,
+      rollNo: true,
+      instituteName: true,
+      website: true,
+      affiliation: true,
+      country: true,
+      isAdmin: true,
+    },
+  });
 
-    if (!user) {
-        return c.json({ error: "User not found" }, 404);
-    }
+  if (!user) {
+    return c.json({ error: "User not found" }, 404);
+  }
 
-    return c.json(user);
-
+  return c.json(user);
 });
 
 // Update user profile
