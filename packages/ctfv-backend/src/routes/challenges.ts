@@ -18,7 +18,7 @@ const challengesRouter = new Hono<{
 challengesRouter.post("/create", authMiddleware, adminMiddleware, async (c) => {
   try {
     const db = getDB(c);
-    const { name, description, url, points, author, category } =
+    const { name, description, url, points, author, category, flag } =
       await c.req.json();
     const newChallenge = await db
       .insert(schema.challenges)
@@ -29,6 +29,7 @@ challengesRouter.post("/create", authMiddleware, adminMiddleware, async (c) => {
         author,
         category,
         description,
+        flag
       })
       .returning()
       .get();
@@ -58,6 +59,7 @@ challengesRouter.post("/read", authMiddleware, async (c) => {
           url: challenge.url,
           points: challenge.points,
           author: challenge.author,
+          flag: c.get("jwtPayload").isAdmin ? challenge.flag : null
         });
         return acc;
       },
@@ -103,6 +105,7 @@ challengesRouter.put(
           points: schema.challenges.points,
           author: schema.challenges.author,
           category: schema.challenges.category,
+          flag: schema.challenges.flag,
         });
 
       if (!updatedChallenge) {

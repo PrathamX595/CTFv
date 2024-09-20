@@ -4,7 +4,9 @@ CREATE TABLE `challenges` (
 	`description` text NOT NULL,
 	`url` text NOT NULL,
 	`points` integer NOT NULL,
-	`category` text NOT NULL
+	`category` text NOT NULL,
+	`author` text NOT NULL,
+	`flag` text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `user` (

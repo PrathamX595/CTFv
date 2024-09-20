@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c9346c76-7eea-46f0-b989-38c85a0de954",
+  "id": "0bfa745a-08a5-486a-93fb-22f070904919",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "challenges": {
@@ -44,6 +44,20 @@
         },
         "category": {
           "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "author": {
+          "name": "author",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "flag": {
+          "name": "flag",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
