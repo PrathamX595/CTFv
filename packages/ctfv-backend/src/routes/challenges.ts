@@ -13,12 +13,6 @@ import { getDB } from "..";
 
 const challengesRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-challengesRouter.get("/", (c) => {
-    return c.json({
-        msg: "working",
-    });
-});
-
 challengesRouter.post('/create', adminMiddleware, async (c) => {
     
     try{
