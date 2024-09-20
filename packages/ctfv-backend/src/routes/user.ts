@@ -114,26 +114,26 @@ userRouter.get("/", async (c) => {
 userRouter.get("/:id", authMiddleware, async (c) => {
     const db = getDB(c);
     const userId = c.req.param("id");
-        const user = await db.query.users.findFirst({
-            where: eq(schema.users.id, userId),
-            columns: {
-            id: true,
-            username: true,
-            email: true,
-            rollNo: true,
-            instituteName: true,
-            website: true,
-            affiliation: true,
-            country: true,
-            isAdmin: true,
-            },
-        });
+    const user = await db.query.users.findFirst({
+        where: eq(schema.users.id, userId),
+        columns: {
+        id: true,
+        username: true,
+        email: true,
+        rollNo: true,
+        instituteName: true,
+        website: true,
+        affiliation: true,
+        country: true,
+        isAdmin: true,
+        },
+    });
 
-        if (!user) {
-            return c.json({ error: "User not found" }, 404);
-        }
+    if (!user) {
+        return c.json({ error: "User not found" }, 404);
+    }
 
-        return c.json(user);
+    return c.json(user);
 });
 
 // Update user profile
@@ -151,14 +151,14 @@ userRouter.put("/:id", authMiddleware, async (c) => {
         .set({ rollNo, instituteName, website, affiliation, country })
         .where(eq(schema.users.id, userId))
         .returning({
-        id: schema.users.id,
-        username: schema.users.username,
-        email: schema.users.email,
-        rollNo: schema.users.rollNo,
-        instituteName: schema.users.instituteName,
-        website: schema.users.website,
-        affiliation: schema.users.affiliation,
-        country: schema.users.country,
+            id: schema.users.id,
+            username: schema.users.username,
+            email: schema.users.email,
+            rollNo: schema.users.rollNo,
+            instituteName: schema.users.instituteName,
+            website: schema.users.website,
+            affiliation: schema.users.affiliation,
+            country: schema.users.country,
         });
 
     return c.json(updatedUser[0]);
