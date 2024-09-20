@@ -6,9 +6,8 @@ import { logger } from "hono/logger";
 
 import { Bindings } from "../env";
 import * as schema from "./db/schema";
-
-import userRouter from "./routes/user";
 import challengesRouter from "./routes/challenges";
+import userRouter from "./routes/user";
 
 type Variables = JwtVariables;
 
@@ -23,8 +22,8 @@ app.use(
 );
 app.use(logger());
 
-app.route('api/users/', userRouter)
-app.route('api/challenges/', challengesRouter)
+app.route("api/users", userRouter);
+app.route("api/challenges", challengesRouter);
 
 export const getDB = (c: Context) => drizzle(c.env.DATABASE, { schema });
 

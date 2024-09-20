@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await fetch("http://localhost:8787/api/auth/login", {
+    const response = await fetch("http://localhost:8787/api/users/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     email: string,
     password: string,
   ) => {
-    const response = await fetch("http://localhost:8787/api/auth/register", {
+    const response = await fetch("http://localhost:8787/api/users/auth/register", {
       method: "POST",
       // TODO: Remove isAdmin from the registration form
       headers: { "Content-Type": "application/json" },
