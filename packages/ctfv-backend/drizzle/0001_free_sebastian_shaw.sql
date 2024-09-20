@@ -1,0 +1,1 @@
+ALTER TABLE `challenges` ADD `author` text NOT NULL;
