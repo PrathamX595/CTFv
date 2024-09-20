@@ -28,6 +28,7 @@ export const challenges = sqliteTable("challenges", {
   category: text("category", {
     enum: ["reversing", "osint", "pwn", "web", "forensics", "crypto", "stego"],
   }).notNull(),
+  author: text("author").notNull()
 });
 
 // Keep other tables (accounts, sessions, verificationTokens, authenticators) as they were
