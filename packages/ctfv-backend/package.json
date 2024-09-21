@@ -8,7 +8,8 @@
     "migration:local": "wrangler d1 migrations apply ctfV-db --local",
     "migration:remote": "wrangler d1 migrations apply ctfV-db --remote",
     "clean": "rm -rf .wrangler",
-    "clean-migrations": "rm -rf drizzle"
+    "clean-migrations": "rm -rf drizzle",
+    "populate:local": "wrangler d1 execute ctfV-db --file=./src/db/populate.sql"
   },
   "dependencies": {
     "@auth/core": "^0.35.0",
