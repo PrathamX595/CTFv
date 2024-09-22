@@ -58,12 +58,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     email: string,
     password: string,
   ) => {
-    const response = await fetch("http://localhost:8787/api/users/auth/register", {
-      method: "POST",
-      // TODO: Remove isAdmin from the registration form
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, email, password, isAdmin: false }),
-    });
+    const response = await fetch(
+      "http://localhost:8787/api/users/auth/register",
+      {
+        method: "POST",
+        // TODO: Remove isAdmin from the registration form
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password, isAdmin: false }),
+      },
+    );
     const data = await response.json();
     if (response.ok) {
       localStorage.setItem("token", data.token);

@@ -29,7 +29,7 @@ challengesRouter.post("/create", authMiddleware, adminMiddleware, async (c) => {
         author,
         category,
         description,
-        flag
+        flag,
       })
       .returning()
       .get();
@@ -42,7 +42,7 @@ challengesRouter.post("/create", authMiddleware, adminMiddleware, async (c) => {
   }
 });
 
-challengesRouter.post("/read", authMiddleware, async (c) => {
+challengesRouter.get("/read", authMiddleware, async (c) => {
   try {
     const db = getDB(c);
     const allChallenges = await db.select().from(schema.challenges);
@@ -59,7 +59,7 @@ challengesRouter.post("/read", authMiddleware, async (c) => {
           url: challenge.url,
           points: challenge.points,
           author: challenge.author,
-          flag: c.get("jwtPayload").isAdmin ? challenge.flag : null
+          flag: c.get("jwtPayload").isAdmin ? challenge.flag : null,
         });
         return acc;
       },
