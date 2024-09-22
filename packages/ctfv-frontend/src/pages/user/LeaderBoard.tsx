@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -15,12 +14,50 @@ type User = {
   points: number;
 };
 
-const leaderboardData: User[] = [
-  { rank: 1, name: "Sagnik Mandal (critick)", points: 500 },
-  { rank: 2, name: "Sagnik Mandal (critick)", points: 100 },
-];
-
 export const LeaderBoard: React.FC = () => {
+  const [leaderboardData, setLeaderboardData] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await fetch("http://localhost:8787/api/challenges/leaderboard", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch leaderboard");
+        }
+
+        const data = await response.json();
+
+        const leaderboard = data.leaderboard.map(
+          (user: { username: string; totalPoints: number }, index: number) => ({
+            rank: index + 1,
+            name: user.username,
+            points: user.totalPoints,
+          })
+        );
+
+        setLeaderboardData(leaderboard);
+      } catch (err) {
+        setError(`${err}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaderboard();
+  }, []);
+
+  if (loading) return <div>Loading leaderboard...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
     <div className="p-8">
       <h1 className="mb-6 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
