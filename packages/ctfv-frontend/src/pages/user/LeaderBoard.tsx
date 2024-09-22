@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 import {
   Table,
   TableBody,
@@ -12,6 +14,7 @@ type User = {
   rank: number;
   name: string;
   points: number;
+  userId: string;
 };
 
 export const LeaderBoard: React.FC = () => {
@@ -22,13 +25,16 @@ export const LeaderBoard: React.FC = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await fetch("http://localhost:8787/api/challenges/leaderboard", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const response = await fetch(
+          "http://localhost:8787/api/challenges/leaderboard",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch leaderboard");
@@ -37,11 +43,15 @@ export const LeaderBoard: React.FC = () => {
         const data = await response.json();
 
         const leaderboard = data.leaderboard.map(
-          (user: { username: string; totalPoints: number }, index: number) => ({
+          (
+            user: { userId: string; username: string; totalPoints: number },
+            index: number,
+          ) => ({
             rank: index + 1,
             name: user.username,
             points: user.totalPoints,
-          })
+            userId: user.userId,
+          }),
         );
 
         setLeaderboardData(leaderboard);
@@ -75,7 +85,14 @@ export const LeaderBoard: React.FC = () => {
           {leaderboardData.map((user) => (
             <TableRow key={user.rank}>
               <TableCell>{user.rank}</TableCell>
-              <TableCell>{user.name}</TableCell>
+              <TableCell>
+                <Link
+                  to={`/personal/${user.userId}`}
+                  className="text-blue-500 underline"
+                >
+                  {user.name}
+                </Link>
+              </TableCell>
               <TableCell>{user.points}</TableCell>
             </TableRow>
           ))}
