@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { JwtVariables, sign } from "hono/jwt";
 
@@ -190,6 +190,7 @@ challengesRouter.post("/submit/:id", authMiddleware, async (c) => {
         and(
           eq(schema.submissions.userId, userId),
           eq(schema.submissions.challengeId, challengeId),
+          eq(schema.submissions.isCorrect, true),
         ),
       )
       .get();
@@ -261,6 +262,33 @@ challengesRouter.get("/submissions", authMiddleware, async (c) => {
       },
       500,
     );
+  }
+});
+
+challengesRouter.get("/leaderboard", authMiddleware, async (c) => {
+  try {
+    const db = getDB(c);
+    const leaderboard = await db
+      .select({
+        userId: schema.submissions.userId,
+        username: schema.users.username,
+        totalPoints: sql`SUM(${schema.challenges.points})`.as("totalPoints"),
+      })
+      .from(schema.submissions)
+      .innerJoin(
+        schema.challenges,
+        eq(schema.submissions.challengeId, schema.challenges.id),
+      )
+      .innerJoin(schema.users, eq(schema.submissions.userId, schema.users.id))
+      .where(eq(schema.submissions.isCorrect, true))
+      .groupBy(schema.submissions.userId)
+      .orderBy(sql`totalPoints DESC`)
+      .all();
+    return c.json({ leaderboard });
+  } catch (e) {
+    return c.json({
+      error: (e as Error).message,
+    });
   }
 });
 
