@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { JwtVariables, sign } from "hono/jwt";
 
@@ -45,7 +45,22 @@ challengesRouter.post("/create", authMiddleware, adminMiddleware, async (c) => {
 challengesRouter.get("/read", authMiddleware, async (c) => {
   try {
     const db = getDB(c);
+    const userId = c.get("jwtPayload").userId;
+
     const allChallenges = await db.select().from(schema.challenges);
+    const solvedChallenges = await db
+      .select({ challengeId: schema.submissions.challengeId })
+      .from(schema.submissions)
+      .where(
+        and(
+          eq(schema.submissions.userId, userId),
+          eq(schema.submissions.isCorrect, true),
+        ),
+      );
+
+    const solvedChallengeIds = new Set(
+      solvedChallenges.map((c) => c.challengeId),
+    );
 
     const groupedChallenges = allChallenges.reduce(
       (acc, challenge) => {
@@ -60,6 +75,7 @@ challengesRouter.get("/read", authMiddleware, async (c) => {
           points: challenge.points,
           author: challenge.author,
           flag: c.get("jwtPayload").isAdmin ? challenge.flag : null,
+          solved: solvedChallengeIds.has(challenge.id),
         });
         return acc;
       },
@@ -149,5 +165,103 @@ challengesRouter.delete(
     }
   },
 );
+
+challengesRouter.post("/submit/:id", authMiddleware, async (c) => {
+  try {
+    const db = getDB(c);
+    const challengeId = c.req.param("id");
+    const { flag } = await c.req.json();
+    const userId = c.get("jwtPayload").userId;
+
+    const challenge = await db
+      .select()
+      .from(schema.challenges)
+      .where(eq(schema.challenges.id, challengeId))
+      .get();
+
+    if (!challenge) {
+      return c.json({ error: "Challenge not found" }, 404);
+    }
+
+    const hasSubmitted = await db
+      .select()
+      .from(schema.submissions)
+      .where(
+        and(
+          eq(schema.submissions.userId, userId),
+          eq(schema.submissions.challengeId, challengeId),
+        ),
+      )
+      .get();
+
+    if (hasSubmitted) {
+      return c.json({ error: "Already submitted" }, 400);
+    }
+
+    const isCorrect = challenge.flag === flag;
+
+    const submission = await db
+      .insert(schema.submissions)
+      .values({
+        userId,
+        challengeId,
+        input: flag,
+        isCorrect,
+      })
+      .returning()
+      .get();
+
+    return c.json({
+      submission: {
+        id: submission.id,
+        timestamp: submission.timestamp,
+        isCorrect: submission.isCorrect,
+      },
+    });
+  } catch (e) {
+    return c.json(
+      {
+        error: (e as Error).message,
+      },
+      500,
+    );
+  }
+});
+
+challengesRouter.get("/submissions", authMiddleware, async (c) => {
+  try {
+    const db = getDB(c);
+    const isAdmin = c.get("jwtPayload").isAdmin;
+    const userId = c.get("jwtPayload").userId;
+
+    const submissions = await db
+      .select({
+        id: schema.submissions.id,
+        userId: schema.submissions.userId,
+        challengeId: schema.submissions.challengeId,
+        input: schema.submissions.input,
+        timestamp: schema.submissions.timestamp,
+        isCorrect: schema.submissions.isCorrect,
+      })
+      .from(schema.submissions)
+      .orderBy(schema.submissions.timestamp);
+
+    if (!isAdmin) {
+      const userSubmissions = submissions.filter(
+        (submission) => submission.userId === userId,
+      );
+      return c.json({ submissions: userSubmissions });
+    }
+
+    return c.json({ submissions });
+  } catch (e) {
+    return c.json(
+      {
+        error: (e as Error).message,
+      },
+      500,
+    );
+  }
+});
 
 export default challengesRouter;

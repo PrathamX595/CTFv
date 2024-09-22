@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("user", {
@@ -32,4 +33,19 @@ export const challenges = sqliteTable("challenges", {
   flag: text("flag").notNull(),
 });
 
-// Keep other tables (accounts, sessions, verificationTokens, authenticators) as they were
+export const submissions = sqliteTable("submissions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  challengeId: text("challengeId")
+    .notNull()
+    .references(() => challenges.id, { onDelete: "cascade" }),
+  input: text("input").notNull(),
+  timestamp: integer("timestamp", { mode: "timestamp_ms" })
+    .notNull()
+    .default(sql`(current_timestamp)`),
+  isCorrect: integer("isCorrect", { mode: "boolean" }).notNull(),
+});

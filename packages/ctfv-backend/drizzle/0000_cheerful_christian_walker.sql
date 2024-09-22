@@ -9,6 +9,17 @@ CREATE TABLE `challenges` (
 	`flag` text NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `submissions` (
+	`id` text PRIMARY KEY NOT NULL,
+	`userId` text NOT NULL,
+	`challengeId` text NOT NULL,
+	`input` text NOT NULL,
+	`timestamp` integer DEFAULT (current_timestamp) NOT NULL,
+	`isCorrect` integer NOT NULL,
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`challengeId`) REFERENCES `challenges`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `user` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,

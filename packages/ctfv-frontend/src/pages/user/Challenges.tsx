@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -26,6 +27,7 @@ type Challenge = {
   points: number;
   author: string;
   flag: string | null;
+  solved: boolean;
 };
 
 type CategoryChallenges = {
@@ -39,6 +41,7 @@ export const Challenges: React.FC = () => {
     null,
   );
   const [flagInput, setFlagInput] = useState("");
+  const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -69,11 +72,49 @@ export const Challenges: React.FC = () => {
   const openDialog = (challenge: Challenge) => {
     setSelectedChallenge(challenge);
     setFlagInput("");
+    setSubmissionStatus(null); // Reset status for new challenge
   };
 
-  const handleFlagSubmission = () => {
+  const handleFlagSubmission = async () => {
     if (!selectedChallenge) return;
-    console.log(`Submitteed ${flagInput} for ${selectedChallenge.name}`);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8787/api/challenges/submit/${selectedChallenge.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ flag: flagInput }),
+        },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.submission.isCorrect) {
+          setSubmissionStatus("correct");
+          setCategories((prevCategories) =>
+            prevCategories.map((category) => ({
+              ...category,
+              challenges: category.challenges.map((challenge) =>
+                challenge.id === selectedChallenge.id
+                  ? { ...challenge, solved: true }
+                  : challenge,
+              ),
+            })),
+          );
+        } else {
+          setSubmissionStatus("incorrect");
+        }
+      } else {
+        setSubmissionStatus("error");
+      }
+    } catch (error) {
+      console.error("Error submitting flag:", error);
+      setSubmissionStatus("error");
+    }
   };
 
   return (
@@ -92,7 +133,9 @@ export const Challenges: React.FC = () => {
               <Dialog key={challenge.id}>
                 <DialogTrigger asChild>
                   <Card
-                    className="cursor-pointer"
+                    className={`cursor-pointer ${
+                      challenge.solved ? "bg-green-200" : ""
+                    }`}
                     onClick={() => openDialog(challenge)}
                   >
                     <CardHeader>
@@ -100,6 +143,9 @@ export const Challenges: React.FC = () => {
                     </CardHeader>
                     <CardContent>
                       <p>{challenge.points} points</p>
+                      {challenge.solved && (
+                        <p className="text-green-600">Solved</p>
+                      )}
                     </CardContent>
                   </Card>
                 </DialogTrigger>
@@ -127,6 +173,30 @@ export const Challenges: React.FC = () => {
                     value={flagInput}
                     onChange={(e) => setFlagInput(e.target.value)}
                   />
+                  {submissionStatus && (
+                    <Alert
+                      variant={
+                        submissionStatus === "correct"
+                          ? "default"
+                          : "destructive"
+                      }
+                    >
+                      <AlertTitle className="font-bold">
+                        {submissionStatus === "correct"
+                          ? "Correct!"
+                          : submissionStatus === "incorrect"
+                            ? "Incorrect!"
+                            : "Error!"}
+                      </AlertTitle>
+                      <AlertDescription>
+                        {submissionStatus === "correct"
+                          ? "You have successfully solved the challenge."
+                          : submissionStatus === "incorrect"
+                            ? "The flag is incorrect. Please try again."
+                            : "An error occurred while submitting the flag."}
+                      </AlertDescription>
+                    </Alert>
+                  )}
                   <DialogFooter>
                     <Button onClick={handleFlagSubmission}>Submit Flag</Button>
                   </DialogFooter>
