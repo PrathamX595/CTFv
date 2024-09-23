@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
+import { useAuth } from "../../AuthContext";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { Button } from "../../components/ui/button";
 import {
@@ -42,6 +44,7 @@ export const Challenges: React.FC = () => {
   );
   const [flagInput, setFlagInput] = useState("");
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
+  const { user } = useAuth(); // Get the current user (including isAdmin)
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -165,41 +168,65 @@ export const Challenges: React.FC = () => {
                         <strong>Challenge Link:</strong>{" "}
                         {selectedChallenge?.url}
                       </p>
+                      {user?.isAdmin && (
+                        <>
+                          <p>
+                            <strong>Flag:</strong> {selectedChallenge?.flag}
+                          </p>
+                          <div className="my-4">
+                            <Button asChild>
+                              <Link
+                                to={`/admin/challenges/edit?id=${selectedChallenge?.id}`}
+                              >
+                                Edit Challenge
+                              </Link>
+                            </Button>
+                          </div>
+                        </>
+                      )}
                     </DialogDescription>
                   </DialogHeader>
-                  <Input
-                    type="text"
-                    placeholder="Enter flag"
-                    value={flagInput}
-                    onChange={(e) => setFlagInput(e.target.value)}
-                  />
-                  {submissionStatus && (
-                    <Alert
-                      variant={
-                        submissionStatus === "correct"
-                          ? "default"
-                          : "destructive"
-                      }
-                    >
-                      <AlertTitle className="font-bold">
-                        {submissionStatus === "correct"
-                          ? "Correct!"
-                          : submissionStatus === "incorrect"
-                            ? "Incorrect!"
-                            : "Error!"}
-                      </AlertTitle>
-                      <AlertDescription>
-                        {submissionStatus === "correct"
-                          ? "You have successfully solved the challenge."
-                          : submissionStatus === "incorrect"
-                            ? "The flag is incorrect. Please try again."
-                            : "An error occurred while submitting the flag."}
-                      </AlertDescription>
-                    </Alert>
+
+                  {/* Hide flag input and button for admins */}
+                  {!user?.isAdmin && (
+                    <>
+                      <Input
+                        type="text"
+                        placeholder="Enter flag"
+                        value={flagInput}
+                        onChange={(e) => setFlagInput(e.target.value)}
+                      />
+                      {submissionStatus && (
+                        <Alert
+                          variant={
+                            submissionStatus === "correct"
+                              ? "default"
+                              : "destructive"
+                          }
+                        >
+                          <AlertTitle className="font-bold">
+                            {submissionStatus === "correct"
+                              ? "Correct!"
+                              : submissionStatus === "incorrect"
+                                ? "Incorrect!"
+                                : "Error!"}
+                          </AlertTitle>
+                          <AlertDescription>
+                            {submissionStatus === "correct"
+                              ? "You have successfully solved the challenge."
+                              : submissionStatus === "incorrect"
+                                ? "The flag is incorrect. Please try again."
+                                : "An error occurred while submitting the flag."}
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                      <DialogFooter>
+                        <Button onClick={handleFlagSubmission}>
+                          Submit Flag
+                        </Button>
+                      </DialogFooter>
+                    </>
                   )}
-                  <DialogFooter>
-                    <Button onClick={handleFlagSubmission}>Submit Flag</Button>
-                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             ))}

@@ -1,9 +1,28 @@
-import { LogIn, LogOut, Moon, Sun, UserRoundPlus } from "lucide-react";
+import {
+  Flag,
+  LogIn,
+  LogOut,
+  Menu,
+  Moon,
+  Settings,
+  Sun,
+  Trophy,
+  User,
+  UserRoundPlus,
+  Users,
+} from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../../AuthContext";
 import { Button } from "../../components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 
 interface NavbarProps {
   toggleDarkMode: () => void;
@@ -25,6 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           CTFv
         </Link>
+
         <Link
           to="/users"
           className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
@@ -37,12 +57,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           Teams
         </Link>
-        {/* <Link
-          to="/challenges"
-          className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
-        >
-          Challenges
-        </Link> */}
         <Link
           to="/leaderboard"
           className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
@@ -50,49 +64,84 @@ export const Navbar: React.FC<NavbarProps> = ({
           Leaderboard
         </Link>
 
-        {user?.isAdmin === true ? (
-          <>
-            <Link
-              to="/admin/dashboard"
-              className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="flex items-center space-x-2 dark:text-zinc-300"
             >
-              Admin Dashboard
-            </Link>
-            <Link
-              to="/admin/challenges"
-              className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
-            >
-              Manage Challenges
-            </Link>
-          </>
-        ) : (
-          <Link
-            to="/challenges"
-            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
-          >
-            Challenges
-          </Link>
-        )}
+              <Menu size={20} />
+              <span>Admin Settings</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {user?.isAdmin ? (
+              <>
+                <DropdownMenuItem>
+                  <Link
+                    to="/admin/dashboard"
+                    className="flex items-center space-x-2"
+                  >
+                    <Settings size={16} />
+                    <span>Admin Dashboard</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to="challenges" className="flex items-center space-x-2">
+                    <Flag size={16} />
+                    <span>Manage Challenges</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link
+                    to="/admin/challenges/create"
+                    className="flex items-center space-x-2"
+                  >
+                    <Flag size={16} />
+                    <span>Create Challenge</span>
+                  </Link>
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <DropdownMenuItem>
+                <Link to="/challenges" className="flex items-center space-x-2">
+                  <Flag size={16} />
+                  <span>Challenges</span>
+                </Link>
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="flex items-center space-x-4">
         {user ? (
-          <div className="flex items-center space-x-4">
-            <Link
-              to="/profile"
-              className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
-            >
-              Profile
-            </Link>
-            <Button
-              variant="outline"
-              onClick={logout}
-              className="flex items-center space-x-2 dark:text-zinc-300"
-            >
-              <LogOut size={20} />
-              <span>Logout</span>
-            </Button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="flex items-center space-x-2 dark:text-zinc-300"
+              >
+                <User size={20} />
+                <span>Account</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <Link to="/profile" className="flex items-center space-x-2">
+                  <User size={16} />
+                  <span>Profile</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logout}>
+                <span className="flex items-center space-x-2">
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <div className="flex items-center space-x-2">
             <Link to="/register">

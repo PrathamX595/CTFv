@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   Table,
   TableBody,
@@ -22,13 +23,16 @@ export const LeaderBoard: React.FC = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await fetch("http://localhost:8787/api/challenges/leaderboard", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const response = await fetch(
+          "http://localhost:8787/api/challenges/leaderboard",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch leaderboard");
@@ -41,7 +45,7 @@ export const LeaderBoard: React.FC = () => {
             rank: index + 1,
             name: user.username,
             points: user.totalPoints,
-          })
+          }),
         );
 
         setLeaderboardData(leaderboard);
