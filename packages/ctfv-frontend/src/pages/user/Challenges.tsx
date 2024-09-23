@@ -80,6 +80,8 @@ export const Challenges: React.FC = () => {
 
   const handleFlagSubmission = async () => {
     if (!selectedChallenge) return;
+    if (!flagInput || !flagInput.trim()) return;
+    if (submissionStatus === "correct") return;
 
     try {
       const response = await fetch(
@@ -131,13 +133,15 @@ export const Challenges: React.FC = () => {
           <h2 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
             {category.category}
           </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {category.challenges.map((challenge) => (
               <Dialog key={challenge.id}>
                 <DialogTrigger asChild>
                   <Card
-                    className={`cursor-pointer ${
-                      challenge.solved ? "bg-green-200" : ""
+                    className={`cursor-pointer border-none text-center shadow-custom transition-shadow duration-300 hover:shadow-hover-custom dark:hover:shadow-dark-hover ${
+                      challenge.solved
+                        ? "bg-green-400 dark:bg-green-600"
+                        : "dark:bg-zinc-700"
                     }`}
                     onClick={() => openDialog(challenge)}
                   >
@@ -146,9 +150,6 @@ export const Challenges: React.FC = () => {
                     </CardHeader>
                     <CardContent>
                       <p>{challenge.points} points</p>
-                      {challenge.solved && (
-                        <p className="text-green-600">Solved</p>
-                      )}
                     </CardContent>
                   </Card>
                 </DialogTrigger>

@@ -304,7 +304,10 @@ challengesRouter.get("/personal/:id", authMiddleware, async (c) => {
         totalPoints: sql`SUM(${schema.challenges.points})`.as("totalPoints"),
       })
       .from(schema.submissions)
-      .innerJoin(schema.challenges, eq(schema.submissions.challengeId, schema.challenges.id))
+      .innerJoin(
+        schema.challenges,
+        eq(schema.submissions.challengeId, schema.challenges.id),
+      )
       .innerJoin(schema.users, eq(schema.submissions.userId, schema.users.id))
       .where(eq(schema.submissions.isCorrect, true))
       .groupBy(schema.submissions.userId)
@@ -326,12 +329,15 @@ challengesRouter.get("/personal/:id", authMiddleware, async (c) => {
         solvedTime: schema.submissions.timestamp,
       })
       .from(schema.submissions)
-      .innerJoin(schema.challenges, eq(schema.submissions.challengeId, schema.challenges.id))
+      .innerJoin(
+        schema.challenges,
+        eq(schema.submissions.challengeId, schema.challenges.id),
+      )
       .where(
         and(
           eq(schema.submissions.userId, id),
-          eq(schema.submissions.isCorrect, true)
-        )
+          eq(schema.submissions.isCorrect, true),
+        ),
       )
       .orderBy(schema.submissions.timestamp);
 
@@ -346,7 +352,7 @@ challengesRouter.get("/personal/:id", authMiddleware, async (c) => {
       {
         error: (e as Error).message,
       },
-      500
+      500,
     );
   }
 });

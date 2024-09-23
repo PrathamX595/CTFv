@@ -93,7 +93,9 @@ export const LeaderBoard: React.FC = () => {
                   {user.name}
                 </Link>
               </TableCell>
-              <TableCell className="dark:text-zinc-300">{user.points}</TableCell>
+              <TableCell className="dark:text-zinc-300">
+                {user.points}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

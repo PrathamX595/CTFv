@@ -11,10 +11,10 @@ import { EditChallenge } from "./pages/admin/EditChallenge";
 import { Challenges } from "./pages/user/Challenges";
 import { Home } from "./pages/user/Home";
 import { LeaderBoard } from "./pages/user/LeaderBoard";
+import Personal from "./pages/user/Personal";
 import { Profile } from "./pages/user/Profile";
 import { Teams } from "./pages/user/Teams";
 import { Users } from "./pages/user/Users";
-import Personal from "./pages/user/Personal";
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();

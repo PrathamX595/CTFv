@@ -41,7 +41,7 @@ const Personal: React.FC = () => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
@@ -66,14 +66,17 @@ const Personal: React.FC = () => {
     <div className="p-8">
       {userData && (
         <>
-          <div className="flex flex-col items-center mb-8 dark:text-zinc-300">
-            <h1 className="text-4xl font-bold mb-2">
-              {userData.username}</h1>
-            <h2 className="text-xl mb-2">Rank: {userData.rank}</h2>
-            <h2 className="text-xl mb-4">Total Points: {userData.totalPoints}</h2>
+          <div className="mb-8 flex flex-col items-center dark:text-zinc-300">
+            <h1 className="mb-2 text-4xl font-bold">{userData.username}</h1>
+            <h2 className="mb-2 text-xl">Rank: {userData.rank}</h2>
+            <h2 className="mb-4 text-xl">
+              Total Points: {userData.totalPoints}
+            </h2>
           </div>
 
-          <h2 className="mb-4 text-xl font-semibold dark:text-zinc-300">Solves</h2>
+          <h2 className="mb-4 text-xl font-semibold dark:text-zinc-300">
+            Solves
+          </h2>
           <Table>
             <TableHeader>
               <TableRow>
@@ -84,7 +87,10 @@ const Personal: React.FC = () => {
             </TableHeader>
             <TableBody>
               {userData.solvedChallenges.map((challenge) => (
-                <TableRow key={challenge.challengeId} className="dark:text-zinc-300">
+                <TableRow
+                  key={challenge.challengeId}
+                  className="dark:text-zinc-300"
+                >
                   <TableCell>{challenge.challengeName}</TableCell>
                   <TableCell>{challenge.points}</TableCell>
                   <TableCell>
