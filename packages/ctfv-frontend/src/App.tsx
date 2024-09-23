@@ -7,6 +7,8 @@ import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { ChallengeList } from "./pages/admin/ChallengeList";
+import { CreateChallenge } from "./pages/admin/CreateChallenge";
+import { EditChallenge } from "./pages/admin/EditChallenge";
 import { Challenges } from "./pages/user/Challenges";
 import { Home } from "./pages/user/Home";
 import { LeaderBoard } from "./pages/user/LeaderBoard";
@@ -41,6 +43,11 @@ const AppContent: React.FC = () => {
               <Route path="/register" element={<Register />} />
               {user?.isAdmin === true && (
                 <>
+                  <Route
+                    path="/challenges/create"
+                    element={<CreateChallenge />}
+                  />
+                  <Route path="/challenges/edit" element={<EditChallenge />} />
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
                   <Route path="/admin/challenges" element={<ChallengeList />} />
                 </>
