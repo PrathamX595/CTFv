@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import {
   Table,
@@ -13,6 +14,7 @@ type User = {
   rank: number;
   name: string;
   points: number;
+  userId: string;
 };
 
 export const LeaderBoard: React.FC = () => {
@@ -41,10 +43,14 @@ export const LeaderBoard: React.FC = () => {
         const data = await response.json();
 
         const leaderboard = data.leaderboard.map(
-          (user: { username: string; totalPoints: number }, index: number) => ({
+          (
+            user: { userId: string; username: string; totalPoints: number },
+            index: number,
+          ) => ({
             rank: index + 1,
             name: user.username,
             points: user.totalPoints,
+            userId: user.userId,
           }),
         );
 
@@ -78,9 +84,16 @@ export const LeaderBoard: React.FC = () => {
         <TableBody>
           {leaderboardData.map((user) => (
             <TableRow key={user.rank}>
-              <TableCell>{user.rank}</TableCell>
-              <TableCell>{user.name}</TableCell>
-              <TableCell>{user.points}</TableCell>
+              <TableCell className="dark:text-zinc-300">{user.rank}</TableCell>
+              <TableCell>
+                <Link
+                  to={`/personal/${user.userId}`}
+                  className="text-blue-500 underline"
+                >
+                  {user.name}
+                </Link>
+              </TableCell>
+              <TableCell className="dark:text-zinc-300">{user.points}</TableCell>
             </TableRow>
           ))}
         </TableBody>

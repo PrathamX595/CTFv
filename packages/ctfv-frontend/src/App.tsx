@@ -14,6 +14,7 @@ import { LeaderBoard } from "./pages/user/LeaderBoard";
 import { Profile } from "./pages/user/Profile";
 import { Teams } from "./pages/user/Teams";
 import { Users } from "./pages/user/Users";
+import Personal from "./pages/user/Personal";
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();
@@ -40,6 +41,7 @@ const AppContent: React.FC = () => {
               <Route path="/profile" element={<Profile />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/personal/:userId" element={<Personal />} />
               {user?.isAdmin === true && (
                 <>
                   <Route

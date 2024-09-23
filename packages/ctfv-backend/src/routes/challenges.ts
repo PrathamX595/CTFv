@@ -292,4 +292,63 @@ challengesRouter.get("/leaderboard", authMiddleware, async (c) => {
   }
 });
 
+challengesRouter.get("/personal/:id", authMiddleware, async (c) => {
+  try {
+    const db = getDB(c);
+    const id = c.req.param("id");
+
+    const leaderboard = await db
+      .select({
+        userId: schema.submissions.userId,
+        username: schema.users.username,
+        totalPoints: sql`SUM(${schema.challenges.points})`.as("totalPoints"),
+      })
+      .from(schema.submissions)
+      .innerJoin(schema.challenges, eq(schema.submissions.challengeId, schema.challenges.id))
+      .innerJoin(schema.users, eq(schema.submissions.userId, schema.users.id))
+      .where(eq(schema.submissions.isCorrect, true))
+      .groupBy(schema.submissions.userId)
+      .orderBy(sql`totalPoints DESC`)
+      .all();
+
+    const userRank = leaderboard.findIndex((entry) => entry.userId === id) + 1;
+    const userData = leaderboard.find((entry) => entry.userId === id);
+
+    if (!userData) {
+      return c.json({ error: "User not found" }, 404);
+    }
+
+    const solvedChallenges = await db
+      .select({
+        challengeId: schema.challenges.id,
+        challengeName: schema.challenges.name,
+        points: schema.challenges.points,
+        solvedTime: schema.submissions.timestamp,
+      })
+      .from(schema.submissions)
+      .innerJoin(schema.challenges, eq(schema.submissions.challengeId, schema.challenges.id))
+      .where(
+        and(
+          eq(schema.submissions.userId, id),
+          eq(schema.submissions.isCorrect, true)
+        )
+      )
+      .orderBy(schema.submissions.timestamp);
+
+    return c.json({
+      rank: userRank,
+      username: userData.username,
+      totalPoints: userData.totalPoints,
+      solvedChallenges,
+    });
+  } catch (e) {
+    return c.json(
+      {
+        error: (e as Error).message,
+      },
+      500
+    );
+  }
+});
+
 export default challengesRouter;
