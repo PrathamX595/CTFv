@@ -66,13 +66,14 @@ const Personal: React.FC = () => {
     <div className="p-8">
       {userData && (
         <>
-          <div className="flex flex-col items-center mb-8">
-            <h1 className="text-4xl font-bold mb-2">{userData.username}</h1>
+          <div className="flex flex-col items-center mb-8 dark:text-zinc-300">
+            <h1 className="text-4xl font-bold mb-2">
+              {userData.username}</h1>
             <h2 className="text-xl mb-2">Rank: {userData.rank}</h2>
             <h2 className="text-xl mb-4">Total Points: {userData.totalPoints}</h2>
           </div>
 
-          <h2 className="mb-4 text-xl font-semibold">Solves</h2>
+          <h2 className="mb-4 text-xl font-semibold dark:text-zinc-300">Solves</h2>
           <Table>
             <TableHeader>
               <TableRow>
@@ -83,7 +84,7 @@ const Personal: React.FC = () => {
             </TableHeader>
             <TableBody>
               {userData.solvedChallenges.map((challenge) => (
-                <TableRow key={challenge.challengeId}>
+                <TableRow key={challenge.challengeId} className="dark:text-zinc-300">
                   <TableCell>{challenge.challengeName}</TableCell>
                   <TableCell>{challenge.points}</TableCell>
                   <TableCell>

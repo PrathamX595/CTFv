@@ -84,7 +84,7 @@ export const LeaderBoard: React.FC = () => {
         <TableBody>
           {leaderboardData.map((user) => (
             <TableRow key={user.rank}>
-              <TableCell>{user.rank}</TableCell>
+              <TableCell className="dark:text-zinc-300">{user.rank}</TableCell>
               <TableCell>
                 <Link
                   to={`/personal/${user.userId}`}
@@ -93,7 +93,7 @@ export const LeaderBoard: React.FC = () => {
                   {user.name}
                 </Link>
               </TableCell>
-              <TableCell>{user.points}</TableCell>
+              <TableCell className="dark:text-zinc-300">{user.points}</TableCell>
             </TableRow>
           ))}
         </TableBody>
