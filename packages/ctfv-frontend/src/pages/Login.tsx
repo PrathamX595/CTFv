@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import { useAuth } from "../AuthContext";
 import { Button } from "../components/ui/button";
 import {
@@ -12,20 +11,28 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
+import { Loader2 } from "lucide-react";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     try {
       await login(email, password);
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error);
+      setError("Login failed. Please check your credentials and try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,6 +63,7 @@ export const Login: React.FC = () => {
               placeholder="Enter your email"
               required
               className="w-full"
+              disabled={loading}
             />
           </div>
           <div className="space-y-2">
@@ -73,10 +81,21 @@ export const Login: React.FC = () => {
               placeholder="Enter your password"
               required
               className="w-full"
+              disabled={loading}
             />
           </div>
-          <Button type="submit" className="w-full">
-            Login
+          {error && (
+            <p className="text-sm text-red-500 dark:text-red-400">{error}</p>
+          )}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Logging in...
+              </>
+            ) : (
+              "Login"
+            )}
           </Button>
         </form>
       </CardContent>

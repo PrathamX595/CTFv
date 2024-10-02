@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 import {
   Table,
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { getBackendURL } from "../../lib/utils";
 
 type SolvedChallenge = {
@@ -28,11 +30,13 @@ type UserData = {
 const Personal: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
         const response = await fetch(
           getBackendURL() + `/api/challenges/personal/${userId}`,
@@ -51,21 +55,37 @@ const Personal: React.FC = () => {
         const data = await response.json();
         setUserData(data);
       } catch (err) {
-        setError((err as Error).message);
+        console.error("Error fetching user data:", err);
+        setError("An error occurred while fetching user data. Please try again later.");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchUserData();
   }, [userId]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading user data...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive" className="m-4">
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="p-8">
-      {userData && (
+      {userData ? (
         <>
           <div className="mb-8 flex flex-col items-center dark:text-zinc-300">
             <h1 className="mb-2 text-4xl font-bold">{userData.username}</h1>
@@ -78,30 +98,36 @@ const Personal: React.FC = () => {
           <h2 className="mb-4 text-xl font-semibold dark:text-zinc-300">
             Solves
           </h2>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Challenge Name</TableHead>
-                <TableHead>Points</TableHead>
-                <TableHead>Solved At</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {userData.solvedChallenges.map((challenge) => (
-                <TableRow
-                  key={challenge.challengeId}
-                  className="dark:text-zinc-300"
-                >
-                  <TableCell>{challenge.challengeName}</TableCell>
-                  <TableCell>{challenge.points}</TableCell>
-                  <TableCell>
-                    {new Date(challenge.solvedTime).toLocaleString()}
-                  </TableCell>
+          {userData.solvedChallenges.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Challenge Name</TableHead>
+                  <TableHead>Points</TableHead>
+                  <TableHead>Solved At</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {userData.solvedChallenges.map((challenge) => (
+                  <TableRow
+                    key={challenge.challengeId}
+                    className="dark:text-zinc-300"
+                  >
+                    <TableCell>{challenge.challengeName}</TableCell>
+                    <TableCell>{challenge.points}</TableCell>
+                    <TableCell>
+                      {new Date(challenge.solvedTime).toLocaleString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p className="text-center text-zinc-600 dark:text-zinc-400">No solved challenges yet.</p>
+          )}
         </>
+      ) : (
+        <p className="text-center text-zinc-600 dark:text-zinc-400">User not found.</p>
       )}
     </div>
   );

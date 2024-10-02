@@ -21,6 +21,7 @@ import {
   DialogTrigger,
 } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
+import { Loader2 } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -45,10 +46,15 @@ export const Challenges: React.FC = () => {
   );
   const [flagInput, setFlagInput] = useState("");
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
-  const { user } = useAuth(); // Get the current user (including isAdmin)
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchChallenges = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
         const response = await fetch(getBackendURL() + "/api/challenges/read", {
           headers: {
@@ -60,10 +66,13 @@ export const Challenges: React.FC = () => {
           const data = await response.json();
           setCategories(data.challenges);
         } else {
-          console.error("Failed to fetch challenges");
+          setError("Failed to fetch challenges. Please try again later.");
         }
       } catch (error) {
         console.error("Error fetching challenges:", error);
+        setError("An error occurred while fetching challenges. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -73,13 +82,16 @@ export const Challenges: React.FC = () => {
   const openDialog = (challenge: Challenge) => {
     setSelectedChallenge(challenge);
     setFlagInput("");
-    setSubmissionStatus(null); // Reset status for new challenge
+    setSubmissionStatus(null);
   };
 
   const handleFlagSubmission = async () => {
     if (!selectedChallenge) return;
     if (!flagInput || !flagInput.trim()) return;
     if (submissionStatus === "correct") return;
+
+    setIsSubmitting(true);
+    setSubmissionStatus(null);
 
     try {
       const response = await fetch(
@@ -117,8 +129,28 @@ export const Challenges: React.FC = () => {
     } catch (error) {
       console.error("Error submitting flag:", error);
       setSubmissionStatus("error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading challenges...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive" className="m-4">
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -186,7 +218,6 @@ export const Challenges: React.FC = () => {
                     </DialogDescription>
                   </DialogHeader>
 
-                  {/* Hide flag input and button for admins */}
                   {!user?.isAdmin && (
                     <>
                       <Input
@@ -194,6 +225,7 @@ export const Challenges: React.FC = () => {
                         placeholder="Enter flag"
                         value={flagInput}
                         onChange={(e) => setFlagInput(e.target.value)}
+                        disabled={isSubmitting}
                       />
                       {submissionStatus && (
                         <Alert
@@ -220,8 +252,15 @@ export const Challenges: React.FC = () => {
                         </Alert>
                       )}
                       <DialogFooter>
-                        <Button onClick={handleFlagSubmission}>
-                          Submit Flag
+                        <Button onClick={handleFlagSubmission} disabled={isSubmitting}>
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Submitting...
+                            </>
+                          ) : (
+                            "Submit Flag"
+                          )}
                         </Button>
                       </DialogFooter>
                     </>

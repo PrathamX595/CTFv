@@ -1,6 +1,7 @@
 import { getBackendURL } from "../../lib/utils";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 import {
   Table,
@@ -10,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 
 type User = {
   rank: number;
@@ -20,11 +22,13 @@ type User = {
 
 export const LeaderBoard: React.FC = () => {
   const [leaderboardData, setLeaderboardData] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
         const response = await fetch(
           getBackendURL() + "/api/challenges/leaderboard",
@@ -57,50 +61,70 @@ export const LeaderBoard: React.FC = () => {
 
         setLeaderboardData(leaderboard);
       } catch (err) {
-        setError(`${err}`);
+        console.error("Error fetching leaderboard:", err);
+        setError("An error occurred while fetching the leaderboard. Please try again later.");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchLeaderboard();
   }, []);
 
-  if (loading) return <div>Loading leaderboard...</div>;
-  if (error) return <div>{error}</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading leaderboard...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive" className="m-4">
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="p-8">
       <h1 className="mb-6 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
         Leaderboard
       </h1>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Rank</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Points</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {leaderboardData.map((user) => (
-            <TableRow key={user.rank}>
-              <TableCell className="dark:text-zinc-300">{user.rank}</TableCell>
-              <TableCell>
-                <Link
-                  to={`/personal/${user.userId}`}
-                  className="text-blue-500 underline"
-                >
-                  {user.name}
-                </Link>
-              </TableCell>
-              <TableCell className="dark:text-zinc-300">
-                {user.points}
-              </TableCell>
+      {leaderboardData.length > 0 ? (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Rank</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Points</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {leaderboardData.map((user) => (
+              <TableRow key={user.rank}>
+                <TableCell className="dark:text-zinc-300">{user.rank}</TableCell>
+                <TableCell>
+                  <Link
+                    to={`/personal/${user.userId}`}
+                    className="text-blue-500 hover:underline dark:text-blue-400"
+                  >
+                    {user.name}
+                  </Link>
+                </TableCell>
+                <TableCell className="dark:text-zinc-300">
+                  {user.points}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <p className="text-center text-zinc-600 dark:text-zinc-400">No leaderboard data available.</p>
+      )}
     </div>
   );
 };
