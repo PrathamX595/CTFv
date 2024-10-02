@@ -1,3 +1,4 @@
+import { getBackendURL } from " @/lib/utils";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -49,15 +50,12 @@ export const Challenges: React.FC = () => {
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8787/api/challenges/read",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+        const response = await fetch(getBackendURL + "/api/challenges/read", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        );
+        });
         if (response.ok) {
           const data = await response.json();
           setCategories(data.challenges);

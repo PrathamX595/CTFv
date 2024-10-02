@@ -1,3 +1,4 @@
+import { getBackendURL } from " @/lib/utils";
 import React, { useEffect, useState } from "react";
 
 import {
@@ -22,7 +23,7 @@ export const Users: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:8787/api/users", {
+        const response = await fetch(getBackendURL() + "/api/users", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,

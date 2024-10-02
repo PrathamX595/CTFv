@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+import { getBackendURL } from "./lib/utils";
+
 interface User {
   id: string;
   email: string;
@@ -56,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await fetch("http://localhost:8787/api/users/auth/login", {
+    const response = await fetch(getBackendURL() + "/api/users/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -76,14 +78,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     email: string,
     password: string,
   ) => {
-    const response = await fetch(
-      "http://localhost:8787/api/users/auth/register",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, isAdmin: false }),
-      },
-    );
+    const response = await fetch(getBackendURL() + "/api/users/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password, isAdmin: false }),
+    });
     const data = await response.json();
     if (response.ok) {
       localStorage.setItem("token", data.token);
@@ -104,17 +103,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const createChallenge = async (challengeData: Omit<Challenge, "id">) => {
     const token = localStorage.getItem("token");
-    const response = await fetch(
-      "http://localhost:8787/api/challenges/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(challengeData),
+    const response = await fetch(getBackendURL + "/api/challenges/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-    );
+      body: JSON.stringify(challengeData),
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -129,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }[]
   > => {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:8787/api/challenges/read", {
+    const response = await fetch(getBackendURL + "/api/challenges/read", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

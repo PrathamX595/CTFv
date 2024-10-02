@@ -1,3 +1,4 @@
+import { getBackendURL } from " @/lib/utils";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -26,7 +27,7 @@ export const LeaderBoard: React.FC = () => {
     const fetchLeaderboard = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8787/api/challenges/leaderboard",
+          getBackendURL + "/api/challenges/leaderboard",
           {
             method: "GET",
             headers: {
