@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { getBackendURL } from " @/lib/utils";
+import { getBackendURL } from "../../lib/utils";
 
 type SolvedChallenge = {
   challengeId: string;

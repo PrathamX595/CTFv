@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
-import { getBackendURL } from " @/lib/utils";
+import { getBackendURL } from "../../lib/utils";
 
 interface UserProfile {
   id: string;
