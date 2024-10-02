@@ -1,4 +1,4 @@
-import { getBackendURL } from " @/lib/utils";
+import { getBackendURL } from "../../lib/utils";
 import React, { useEffect, useState } from "react";
 
 import {
