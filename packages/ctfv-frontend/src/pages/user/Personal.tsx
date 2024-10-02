@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
+import { getBackendURL } from " @/lib/utils";
 
 type SolvedChallenge = {
   challengeId: string;
@@ -34,7 +35,7 @@ const Personal: React.FC = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8787/api/challenges/personal/${userId}`,
+          getBackendURL() + `/api/challenges/personal/${userId}`,
           {
             method: "GET",
             headers: {

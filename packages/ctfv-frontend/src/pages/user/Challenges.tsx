@@ -50,7 +50,7 @@ export const Challenges: React.FC = () => {
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
-        const response = await fetch(getBackendURL + "/api/challenges/read", {
+        const response = await fetch(getBackendURL() + "/api/challenges/read", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -83,7 +83,7 @@ export const Challenges: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8787/api/challenges/submit/${selectedChallenge.id}`,
+        getBackendURL() + `/api/challenges/submit/${selectedChallenge.id}`,
         {
           method: "POST",
           headers: {

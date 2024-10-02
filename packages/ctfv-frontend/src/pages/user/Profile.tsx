@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
+import { getBackendURL } from " @/lib/utils";
 
 interface UserProfile {
   id: string;
@@ -35,7 +36,7 @@ export const Profile: React.FC = () => {
       if (user) {
         try {
           const response = await fetch(
-            `http://localhost:8787/api/users/${user.id}`,
+            getBackendURL() + `/api/users/${user.id}`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -69,7 +70,7 @@ export const Profile: React.FC = () => {
     if (user) {
       try {
         const response = await fetch(
-          `http://localhost:8787/api/users/${user.id}`,
+          getBackendURL() + `/api/users/${user.id}`,
           {
             method: "PUT",
             headers: {

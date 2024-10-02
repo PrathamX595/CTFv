@@ -103,7 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const createChallenge = async (challengeData: Omit<Challenge, "id">) => {
     const token = localStorage.getItem("token");
-    const response = await fetch(getBackendURL + "/api/challenges/create", {
+    const response = await fetch(getBackendURL() + "/api/challenges/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -125,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }[]
   > => {
     const token = localStorage.getItem("token");
-    const response = await fetch(getBackendURL + "/api/challenges/read", {
+    const response = await fetch(getBackendURL() + "/api/challenges/read", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -145,7 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   ) => {
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:8787/api/challenges/update/${id}`,
+      getBackendURL() + `/api/challenges/update/${id}`,
       {
         method: "PUT",
         headers: {
@@ -165,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const deleteChallenge = async (id: string) => {
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:8787/api/challenges/delete/${id}`,
+      getBackendURL() + `/api/challenges/delete/${id}`,
       {
         method: "DELETE",
         headers: {

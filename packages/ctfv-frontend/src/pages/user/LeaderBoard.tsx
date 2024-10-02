@@ -27,7 +27,7 @@ export const LeaderBoard: React.FC = () => {
     const fetchLeaderboard = async () => {
       try {
         const response = await fetch(
-          getBackendURL + "/api/challenges/leaderboard",
+          getBackendURL() + "/api/challenges/leaderboard",
           {
             method: "GET",
             headers: {
