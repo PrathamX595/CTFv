@@ -1,5 +1,7 @@
+import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import { useAuth } from "../AuthContext";
 import { Button } from "../components/ui/button";
 import {
@@ -11,7 +13,6 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { Loader2 } from "lucide-react";
 
 export const Register: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -28,7 +29,7 @@ export const Register: React.FC = () => {
     setError(null);
     try {
       await register(username, email, password);
-      navigate("/");
+      navigate("/send-email");
     } catch (error) {
       console.error("Registration failed:", error);
       setError("Registration failed. Please try again.");

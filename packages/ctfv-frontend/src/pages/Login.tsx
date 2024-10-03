@@ -1,5 +1,7 @@
+import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import { useAuth } from "../AuthContext";
 import { Button } from "../components/ui/button";
 import {
@@ -11,7 +13,6 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { Loader2 } from "lucide-react";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ export const Login: React.FC = () => {
     setError(null);
     try {
       await login(email, password);
-      navigate("/");
+      navigate("/send-email");
     } catch (error) {
       console.error("Login failed:", error);
       setError("Login failed. Please check your credentials and try again.");

@@ -5,6 +5,8 @@ import { AuthProvider, useAuth } from "./AuthContext";
 import { Navbar } from "./components/layout/Navbar";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import SendEmail from "./pages/SendEmail";
+import VerifyEmail from "./pages/VerifyEmail";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { CreateChallenge } from "./pages/admin/CreateChallenge";
 import { EditChallenge } from "./pages/admin/EditChallenge";
@@ -42,6 +44,8 @@ const AppContent: React.FC = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/personal/:userId" element={<Personal />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/send-email" element={<SendEmail />} />
               {user?.isAdmin === true && (
                 <>
                   <Route

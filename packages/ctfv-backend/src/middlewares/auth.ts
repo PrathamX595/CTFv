@@ -17,6 +17,11 @@ export const authMiddleware: MiddlewareHandler<{
   const token = authHeader.split(" ")[1];
   try {
     const payload = await verify(token, c.env.AUTH_SECRET);
+
+    if (payload.emailVerified === false) {
+      return c.json({ error: "Email not verified" }, 401);
+    }
+
     c.set("jwtPayload", payload);
     await next();
   } catch (error) {
