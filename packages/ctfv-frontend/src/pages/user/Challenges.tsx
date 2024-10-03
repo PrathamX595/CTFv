@@ -1,4 +1,4 @@
-import { getBackendURL } from "../../lib/utils"
+import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -21,7 +21,7 @@ import {
   DialogTrigger,
 } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
-import { Loader2 } from "lucide-react";
+import { getBackendURL } from "../../lib/utils";
 
 type Challenge = {
   id: string;
@@ -70,7 +70,9 @@ export const Challenges: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching challenges:", error);
-        setError("An error occurred while fetching challenges. Please try again later.");
+        setError(
+          "An error occurred while fetching challenges. Please try again later.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -136,7 +138,7 @@ export const Challenges: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">Loading challenges...</span>
       </div>
@@ -252,7 +254,10 @@ export const Challenges: React.FC = () => {
                         </Alert>
                       )}
                       <DialogFooter>
-                        <Button onClick={handleFlagSubmission} disabled={isSubmitting}>
+                        <Button
+                          onClick={handleFlagSubmission}
+                          disabled={isSubmitting}
+                        >
                           {isSubmitting ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

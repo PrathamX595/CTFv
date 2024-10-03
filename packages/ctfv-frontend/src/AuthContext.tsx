@@ -107,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
     const data = await response.json();
     if (response.ok) {

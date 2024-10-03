@@ -51,7 +51,11 @@ userRouter.post("/auth/register", async (c) => {
     }
 
     const token = await sign(
-      { userId: newUser.id, isAdmin: newUser.isAdmin, emailVerified: newUser.emailVerified },
+      {
+        userId: newUser.id,
+        isAdmin: newUser.isAdmin,
+        emailVerified: newUser.emailVerified,
+      },
       c.env.AUTH_SECRET,
     );
 
@@ -83,7 +87,11 @@ userRouter.post("/auth/login", async (c) => {
   }
 
   const token = await sign(
-    { userId: user.id, isAdmin: user.isAdmin, emailVerified: user.emailVerified },
+    {
+      userId: user.id,
+      isAdmin: user.isAdmin,
+      emailVerified: user.emailVerified,
+    },
     c.env.AUTH_SECRET,
   );
 
@@ -98,29 +106,37 @@ userRouter.post("/auth/login", async (c) => {
   });
 });
 
-userRouter.post("/auth/send-verify-email", authMiddleware, async (c) => {
+userRouter.post("/auth/send-verify-email", async (c) => {
   const db = getDB(c);
-  const jwtPayload = c.get("jwtPayload");
-
-  if (jwtPayload.emailVerified) {
-    return c.json({ error: "Email already verified" }, 400);
-  }
+  const { email } = await c.req.json();
 
   const user = await db.query.users.findFirst({
-    where: eq(schema.users.id, jwtPayload.userId),
+    where: eq(schema.users.email, email),
   });
 
   if (!user) {
     return c.json({ error: "User not found" }, 404);
   }
 
-  if (user.lastVerificationEmailSent && user.lastVerificationEmailSent.getTime() > Date.now() - 24 * 60 * 60 * 1000) {
+  if (user.emailVerified) {
+    return c.json({ error: "Email already verified" }, 400);
+  }
+
+  if (
+    user.lastVerificationEmailSent &&
+    user.lastVerificationEmailSent.getTime() > Date.now() - 24 * 60 * 60 * 1000
+  ) {
     return c.json({ error: "Email already sent, wait 24 hours!" }, 400);
   }
 
   const emailSent = await sendVerificationEmail(c, user.email, user.id);
 
   if (emailSent) {
+    await db
+      .update(schema.users)
+      .set({ lastVerificationEmailSent: new Date() })
+      .where(eq(schema.users.id, user.id))
+      .run();
     return c.json({ message: "Verification email sent" });
   }
 
@@ -131,7 +147,9 @@ userRouter.get("/auth/verify-email", async (c) => {
   const db = getDB(c);
   const emailToken = c.req.query("token") as string;
   try {
-    const decoded = (await verify(emailToken, c.env.AUTH_SECRET)) as { id: string };
+    const decoded = (await verify(emailToken, c.env.AUTH_SECRET)) as {
+      id: string;
+    };
 
     const updatedUser = await db
       .update(schema.users)
@@ -143,7 +161,14 @@ userRouter.get("/auth/verify-email", async (c) => {
         emailVerified: schema.users.emailVerified,
       });
 
-    const token = await sign({ userId: updatedUser[0].id, isAdmin: updatedUser[0].isAdmin, emailVerified: updatedUser[0].emailVerified }, c.env.AUTH_SECRET);
+    const token = await sign(
+      {
+        userId: updatedUser[0].id,
+        isAdmin: updatedUser[0].isAdmin,
+        emailVerified: updatedUser[0].emailVerified,
+      },
+      c.env.AUTH_SECRET,
+    );
 
     return c.json({ message: "Email verified successfully!", token });
   } catch (err) {

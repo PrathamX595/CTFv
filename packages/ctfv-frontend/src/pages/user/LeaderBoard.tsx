@@ -1,8 +1,8 @@
-import { getBackendURL } from "../../lib/utils";
+import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Loader2 } from "lucide-react";
 
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
+import { getBackendURL } from "../../lib/utils";
 
 type User = {
   rank: number;
@@ -62,7 +62,9 @@ export const LeaderBoard: React.FC = () => {
         setLeaderboardData(leaderboard);
       } catch (err) {
         console.error("Error fetching leaderboard:", err);
-        setError("An error occurred while fetching the leaderboard. Please try again later.");
+        setError(
+          "An error occurred while fetching the leaderboard. Please try again later.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -73,7 +75,7 @@ export const LeaderBoard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">Loading leaderboard...</span>
       </div>
@@ -106,7 +108,9 @@ export const LeaderBoard: React.FC = () => {
           <TableBody>
             {leaderboardData.map((user) => (
               <TableRow key={user.rank}>
-                <TableCell className="dark:text-zinc-300">{user.rank}</TableCell>
+                <TableCell className="dark:text-zinc-300">
+                  {user.rank}
+                </TableCell>
                 <TableCell>
                   <Link
                     to={`/personal/${user.userId}`}
@@ -123,7 +127,9 @@ export const LeaderBoard: React.FC = () => {
           </TableBody>
         </Table>
       ) : (
-        <p className="text-center text-zinc-600 dark:text-zinc-400">No leaderboard data available.</p>
+        <p className="text-center text-zinc-600 dark:text-zinc-400">
+          No leaderboard data available.
+        </p>
       )}
     </div>
   );

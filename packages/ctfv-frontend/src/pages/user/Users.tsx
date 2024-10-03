@@ -1,7 +1,7 @@
-import { getBackendURL } from "../../lib/utils";
-import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
+import { getBackendURL } from "../../lib/utils";
 
 type User = {
   username: string;
@@ -43,7 +43,9 @@ export const Users: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching users:", error);
-        setError("An error occurred while fetching users. Please try again later.");
+        setError(
+          "An error occurred while fetching users. Please try again later.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -54,7 +56,7 @@ export const Users: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">Loading users...</span>
       </div>
@@ -108,7 +110,9 @@ export const Users: React.FC = () => {
           </TableBody>
         </Table>
       ) : (
-        <p className="text-center text-zinc-600 dark:text-zinc-400">No users found.</p>
+        <p className="text-center text-zinc-600 dark:text-zinc-400">
+          No users found.
+        </p>
       )}
     </div>
   );

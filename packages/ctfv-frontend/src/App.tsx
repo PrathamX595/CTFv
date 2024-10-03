@@ -5,6 +5,8 @@ import { AuthProvider, useAuth } from "./AuthContext";
 import { Navbar } from "./components/layout/Navbar";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import SendEmail from "./pages/SendEmail";
+import VerifyEmail from "./pages/VerifyEmail";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { CreateChallenge } from "./pages/admin/CreateChallenge";
 import { EditChallenge } from "./pages/admin/EditChallenge";
@@ -15,8 +17,6 @@ import Personal from "./pages/user/Personal";
 import { Profile } from "./pages/user/Profile";
 import { Teams } from "./pages/user/Teams";
 import { Users } from "./pages/user/Users";
-import VerifyEmail from "./pages/VerifyEmail";
-import SendEmail from "./pages/SendEmail";
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();
