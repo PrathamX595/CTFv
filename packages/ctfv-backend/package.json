@@ -24,6 +24,7 @@
     "@cloudflare/workers-types": "^4.20240529.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/bcryptjs": "^2.4.6",
+    "@types/nodemailer": "^6.4.16",
     "prettier": "^3.3.3",
     "wrangler": "^3.57.2"
   }

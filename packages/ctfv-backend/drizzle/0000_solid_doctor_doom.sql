@@ -27,12 +27,13 @@ CREATE TABLE `user` (
 	`password` text NOT NULL,
 	`rollNo` text,
 	`instituteName` text,
-	`emailVerified` integer,
 	`image` text,
 	`website` text,
 	`affiliation` text,
 	`country` text,
-	`isAdmin` integer DEFAULT false NOT NULL
+	`isAdmin` integer DEFAULT false NOT NULL,
+	`emailVerified` integer DEFAULT false NOT NULL,
+	`lastVerificationEmailSent` integer
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `user_name_unique` ON `user` (`name`);--> statement-breakpoint

@@ -7,6 +7,7 @@ interface User {
   email: string;
   username: string;
   isAdmin: boolean;
+  emailVerified: boolean;
 }
 
 interface Challenge {
@@ -32,6 +33,7 @@ interface AuthContextType {
     challengeData: Partial<Challenge>,
   ) => Promise<void>;
   deleteChallenge: (id: string) => Promise<void>;
+  verifyEmail: (token: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -97,6 +99,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
+  };
+
+  const verifyEmail = async (token: string) => {
+    const response = await fetch(
+      `http://localhost:8787/api/users/auth/verify-email?token=${token}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    const data = await response.json();
+    if (response.ok) {
+      // Update the user's email verification status
+      const updatedUser: User = {
+        ...user!,
+        emailVerified: true,
+      };
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    } else {
+      throw new Error(data.error);
+    }
   };
 
   // Challenge Management Functions
@@ -191,6 +216,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         getChallenges,
         updateChallenge,
         deleteChallenge,
+        verifyEmail,
       }}
     >
       {children}

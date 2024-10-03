@@ -15,6 +15,8 @@ import Personal from "./pages/user/Personal";
 import { Profile } from "./pages/user/Profile";
 import { Teams } from "./pages/user/Teams";
 import { Users } from "./pages/user/Users";
+import VerifyEmail from "./pages/VerifyEmail";
+import SendEmail from "./pages/SendEmail";
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();
@@ -42,6 +44,8 @@ const AppContent: React.FC = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/personal/:userId" element={<Personal />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/send-email" element={<SendEmail />} />
               {user?.isAdmin === true && (
                 <>
                   <Route

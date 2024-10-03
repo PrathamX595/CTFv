@@ -10,12 +10,17 @@ export const users = sqliteTable("user", {
   password: text("password").notNull(),
   rollNo: text("rollNo"),
   instituteName: text("instituteName"),
-  emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
   website: text("website"),
   affiliation: text("affiliation"),
   country: text("country"),
   isAdmin: integer("isAdmin", { mode: "boolean" }).notNull().default(false),
+  emailVerified: integer("emailVerified", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  lastVerificationEmailSent: integer("lastVerificationEmailSent", {
+    mode: "timestamp_ms",
+  }),
 });
 
 export const challenges = sqliteTable("challenges", {

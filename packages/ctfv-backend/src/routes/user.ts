@@ -1,12 +1,13 @@
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
-import { JwtVariables, sign } from "hono/jwt";
+import { JwtVariables, sign, verify } from "hono/jwt";
 
 import { getDB } from "..";
 import { Bindings } from "../../env";
 import * as schema from "../db/schema";
 import { authMiddleware } from "../middlewares/auth";
+import { sendVerificationEmail } from "../utils/send-mail";
 
 type Variables = JwtVariables;
 
@@ -50,7 +51,7 @@ userRouter.post("/auth/register", async (c) => {
     }
 
     const token = await sign(
-      { userId: newUser.id, isAdmin: newUser.isAdmin },
+      { userId: newUser.id, isAdmin: newUser.isAdmin, emailVerified: newUser.emailVerified },
       c.env.AUTH_SECRET,
     );
 
@@ -82,7 +83,7 @@ userRouter.post("/auth/login", async (c) => {
   }
 
   const token = await sign(
-    { userId: user.id, isAdmin: user.isAdmin },
+    { userId: user.id, isAdmin: user.isAdmin, emailVerified: user.emailVerified },
     c.env.AUTH_SECRET,
   );
 
@@ -95,6 +96,59 @@ userRouter.post("/auth/login", async (c) => {
       isAdmin: user.isAdmin,
     },
   });
+});
+
+userRouter.post("/auth/send-verify-email", authMiddleware, async (c) => {
+  const db = getDB(c);
+  const jwtPayload = c.get("jwtPayload");
+
+  if (jwtPayload.emailVerified) {
+    return c.json({ error: "Email already verified" }, 400);
+  }
+
+  const user = await db.query.users.findFirst({
+    where: eq(schema.users.id, jwtPayload.userId),
+  });
+
+  if (!user) {
+    return c.json({ error: "User not found" }, 404);
+  }
+
+  if (user.lastVerificationEmailSent && user.lastVerificationEmailSent.getTime() > Date.now() - 24 * 60 * 60 * 1000) {
+    return c.json({ error: "Email already sent, wait 24 hours!" }, 400);
+  }
+
+  const emailSent = await sendVerificationEmail(c, user.email, user.id);
+
+  if (emailSent) {
+    return c.json({ message: "Verification email sent" });
+  }
+
+  return c.json({ error: "Failed to send verification email" }, 500);
+});
+
+userRouter.get("/auth/verify-email", async (c) => {
+  const db = getDB(c);
+  const emailToken = c.req.query("token") as string;
+  try {
+    const decoded = (await verify(emailToken, c.env.AUTH_SECRET)) as { id: string };
+
+    const updatedUser = await db
+      .update(schema.users)
+      .set({ emailVerified: true })
+      .where(eq(schema.users.id, decoded.id))
+      .returning({
+        id: schema.users.id,
+        isAdmin: schema.users.isAdmin,
+        emailVerified: schema.users.emailVerified,
+      });
+
+    const token = await sign({ userId: updatedUser[0].id, isAdmin: updatedUser[0].isAdmin, emailVerified: updatedUser[0].emailVerified }, c.env.AUTH_SECRET);
+
+    return c.json({ message: "Email verified successfully!", token });
+  } catch (err) {
+    return c.json({ error: "Invalid or expired token." }, 400);
+  }
 });
 
 userRouter.get("/", async (c) => {
