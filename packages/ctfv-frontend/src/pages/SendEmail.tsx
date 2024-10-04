@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import { getBackendURL } from " @/lib/utils";
 
 const SendEmail = () => {
   const [resendStatus, setResendStatus] = useState<
@@ -24,7 +25,7 @@ const SendEmail = () => {
     setResendStatus("sending");
     try {
       const response = await fetch(
-        "http://localhost:8787/api/users/auth/send-verify-email",
+        getBackendURL + "/api/users/auth/send-verify-email",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
