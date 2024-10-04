@@ -103,7 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const verifyEmail = async (token: string) => {
     const response = await fetch(
-      `http://localhost:8787/api/users/auth/verify-email?token=${token}`,
+      getBackendURL() + `/api/users/auth/verify-email?token=${token}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
