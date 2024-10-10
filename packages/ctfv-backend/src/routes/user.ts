@@ -16,12 +16,7 @@ const userRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 userRouter.post("/auth/register", async (c) => {
   try {
     const db = getDB(c);
-    const { email, password, username, isAdmin } = await c.req.json();
-
-    // TODO: Remove isAdmin from the registration form
-    if (typeof isAdmin !== "boolean") {
-      return c.json({ error: "isAdmin must be boolean" }, 400);
-    }
+    const { email, password, username } = await c.req.json();
 
     const existingUser = await db.query.users.findFirst({
       where: eq(schema.users.email, email),
@@ -39,7 +34,7 @@ userRouter.post("/auth/register", async (c) => {
         email,
         password: hashedPassword,
         username,
-        isAdmin,
+        isAdmin: false,
       })
       .returning()
       .get();
@@ -52,22 +47,16 @@ userRouter.post("/auth/register", async (c) => {
 
     const token = await sign(
       {
-        userId: newUser.id,
-        isAdmin: newUser.isAdmin,
+        id: newUser.id,
+        email: newUser.email,
+        username: newUser.username,
         emailVerified: newUser.emailVerified,
+        isAdmin: false,
       },
       c.env.AUTH_SECRET,
     );
 
-    return c.json({
-      token,
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        username: newUser.username,
-        isAdmin: newUser.isAdmin,
-      },
-    });
+    return c.json({ token });
   } catch (error) {
     console.error("Error in /api/auth/register:", error);
     return c.json({ error: "Internal server error" }, 500);
@@ -88,22 +77,16 @@ userRouter.post("/auth/login", async (c) => {
 
   const token = await sign(
     {
-      userId: user.id,
+      id: user.id,
+      email: user.email,
+      username: user.username,
       isAdmin: user.isAdmin,
       emailVerified: user.emailVerified,
     },
     c.env.AUTH_SECRET,
   );
 
-  return c.json({
-    token,
-    user: {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      isAdmin: user.isAdmin,
-    },
-  });
+  return c.json({ token });
 });
 
 userRouter.post("/auth/send-verify-email", async (c) => {

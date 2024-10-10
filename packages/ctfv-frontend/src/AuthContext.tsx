@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 import { getBackendURL } from "./lib/utils";
 
@@ -54,10 +55,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      setUser(JSON.parse(localStorage.getItem("user") || "null"));
-      console.log(JSON.parse(localStorage.getItem("user") || "null"));
+      try {
+        const decodedToken = jwtDecode<User>(token);
+        setUser(decodedToken);
+      } catch (error) {
+        console.error("Invalid token:", error);
+        localStorage.removeItem("token");
+      }
     }
   }, []);
+
+  const updateUserFromToken = (token: string) => {
+    localStorage.setItem("token", token);
+    const decodedToken = jwtDecode<User>(token);
+    setUser(decodedToken);
+  };
 
   const login = async (email: string, password: string) => {
     const response = await fetch(getBackendURL() + "/api/users/auth/login", {
@@ -67,9 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     });
     const data = await response.json();
     if (response.ok) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUser(data.user);
+      updateUserFromToken(data.token);
     } else {
       throw new Error(data.error);
     }
@@ -87,9 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     });
     const data = await response.json();
     if (response.ok) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUser(data.user);
+      updateUserFromToken(data.token);
     } else {
       throw new Error(data.error);
     }
@@ -97,7 +105,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
     setUser(null);
   };
 
@@ -111,14 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     );
     const data = await response.json();
     if (response.ok) {
-      // Update the user's email verification status
-      const updatedUser: User = {
-        ...user!,
-        emailVerified: true,
-      };
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setUser(updatedUser);
+      updateUserFromToken(data.token);
     } else {
       throw new Error(data.error);
     }
