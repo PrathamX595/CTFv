@@ -19,9 +19,9 @@ export const sendVerificationEmail = async (
   const verificationLink = `${frontendURL}/verify-email?token=${token}`;
 
   const formData = new FormData();
-  formData.append("from", `Verification <noreply@${c.env.MAILGUN_DOMAIN}>`);
+  formData.append("from", `CTFv Verification, Cybersec IIT (BHU) <noreply@${c.env.MAILGUN_DOMAIN}>`);
   formData.append("to", email);
-  formData.append("subject", "Verify your email");
+  formData.append("subject", "Verify your email for CTFv");
   formData.append(
     "text",
     `Click on the following link to verify your email: ${verificationLink}`,
