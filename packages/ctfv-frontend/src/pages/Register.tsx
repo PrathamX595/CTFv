@@ -32,7 +32,7 @@ export const Register: React.FC = () => {
       navigate("/send-email");
     } catch (error) {
       console.error("Registration failed:", error);
-      setError("Registration failed. Please try again.");
+      setError("Registration failed." + error);
     } finally {
       setLoading(false);
     }
