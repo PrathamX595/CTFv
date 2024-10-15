@@ -55,7 +55,7 @@ userRouter.post("/auth/register", async (c) => {
 
     const token = await sign(
       {
-        id: newUser.id,
+        userId: newUser.id,
         email: newUser.email,
         username: newUser.username,
         emailVerified: newUser.emailVerified,
@@ -85,7 +85,7 @@ userRouter.post("/auth/login", async (c) => {
 
   const token = await sign(
     {
-      id: user.id,
+      userId: user.id,
       email: user.email,
       username: user.username,
       isAdmin: user.isAdmin,
