@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Table,
   TableBody,
@@ -9,8 +9,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
-import { getBackendURL } from "../../lib/utils";
+} from "@/components/ui/table";
+import { getBackendURL } from "@/lib/utils";
 
 type User = {
   username: string;

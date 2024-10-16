@@ -1,8 +1,8 @@
 import React from "react";
 import { CalendarDays, Shield, Award, ChevronRight } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
-import { Alert, AlertTitle, AlertDescription } from "../../components/ui/alert";
-import { Button } from "../../components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 export const Home: React.FC = () => {

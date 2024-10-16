@@ -1,22 +1,22 @@
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
-import { AuthProvider, useAuth } from "./AuthContext";
-import { Navbar } from "./components/layout/Navbar";
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
-import SendEmail from "./pages/SendEmail";
-import VerifyEmail from "./pages/VerifyEmail";
-import { AdminDashboard } from "./pages/admin/AdminDashboard";
-import { CreateChallenge } from "./pages/admin/CreateChallenge";
-import { EditChallenge } from "./pages/admin/EditChallenge";
-import { Challenges } from "./pages/user/Challenges";
-import { Home } from "./pages/user/Home";
-import { LeaderBoard } from "./pages/user/LeaderBoard";
-import Personal from "./pages/user/Personal";
-import { Profile } from "./pages/user/Profile";
-import { Teams } from "./pages/user/Teams";
-import { Users } from "./pages/user/Users";
+import { AuthProvider, useAuth } from "@/AuthContext";
+import { Navbar } from "@/components/layout/Navbar";
+import { Login } from "@/pages/Login";
+import { Register } from "@/pages/Register";
+import SendEmail from "@/pages/SendEmail";
+import VerifyEmail from "@/pages/VerifyEmail";
+import { AdminDashboard } from "@/pages/admin/AdminDashboard";
+import { CreateChallenge } from "@/pages/admin/CreateChallenge";
+import { EditChallenge } from "@/pages/admin/EditChallenge";
+import { Challenges } from "@/pages/user/Challenges";
+import { Home } from "@/pages/user/Home";
+import { LeaderBoard } from "@/pages/user/LeaderBoard";
+import Personal from "@/pages/user/Personal";
+import { Profile } from "@/pages/user/Profile";
+import { Teams } from "@/pages/user/Teams";
+import { Users } from "@/pages/user/Users";
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();

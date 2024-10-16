@@ -11,8 +11,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
-import { Input } from "../components/ui/input";
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState("");

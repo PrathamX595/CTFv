@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 
-import { useAuth } from "../../AuthContext";
-import { Button } from "../../components/ui/button";
+import { useAuth } from "@/AuthContext";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { getBackendURL } from "../../lib/utils";
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { getBackendURL } from "@/lib/utils";
 
 interface UserProfile {
   id: string;
