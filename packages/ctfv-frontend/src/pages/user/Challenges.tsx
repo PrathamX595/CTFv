@@ -344,7 +344,7 @@ export const Challenges: React.FC = () => {
                     </TabsContent>
 
                     <TabsContent value="submissions">
-                    <div className="h-96 overflow-auto">
+                    <div className="max-h-96 overflow-auto">
                         {submissions.length === 0 ? (
                           <p>No submissions found.</p>
                         ) : (
