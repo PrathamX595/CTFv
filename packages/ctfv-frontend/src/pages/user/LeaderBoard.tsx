@@ -128,7 +128,7 @@ export const LeaderBoard: React.FC = () => {
         </Table>
       ) : (
         <p className="text-center text-zinc-600 dark:text-zinc-400">
-          No leaderboard data available.
+          No submissions yet, be the first one to submit!
         </p>
       )}
     </div>

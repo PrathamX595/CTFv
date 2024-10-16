@@ -273,6 +273,9 @@ challengesRouter.get("/leaderboard", authMiddleware, async (c) => {
         userId: schema.submissions.userId,
         username: schema.users.username,
         totalPoints: sql`SUM(${schema.challenges.points})`.as("totalPoints"),
+        lastSubmission: sql`MAX(${schema.submissions.timestamp})`.as(
+          "lastSubmission",
+        ),
       })
       .from(schema.submissions)
       .innerJoin(
@@ -282,7 +285,7 @@ challengesRouter.get("/leaderboard", authMiddleware, async (c) => {
       .innerJoin(schema.users, eq(schema.submissions.userId, schema.users.id))
       .where(eq(schema.submissions.isCorrect, true))
       .groupBy(schema.submissions.userId)
-      .orderBy(sql`totalPoints DESC`)
+      .orderBy(sql`totalPoints DESC`, sql`lastSubmission ASC`)
       .all();
     return c.json({ leaderboard });
   } catch (e) {

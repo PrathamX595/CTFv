@@ -28,10 +28,7 @@ userRouter.post("/auth/register", async (c) => {
 
     // Ensure email ends with @itbhu.ac.in
     if (!email.endsWith("@itbhu.ac.in")) {
-      return c.json(
-        { error: "Email must end with @itbhu.ac.in" },
-        400,
-      );
+      return c.json({ error: "Email must end with @itbhu.ac.in" }, 400);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
