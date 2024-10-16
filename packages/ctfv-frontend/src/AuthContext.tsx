@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getBackendURL } from "./lib/utils";
 
 interface User {
-  id: string;
+  userId: string;
   email: string;
   username: string;
   isAdmin: boolean;

@@ -30,7 +30,7 @@ export const Profile: React.FC = () => {
       if (user) {
         try {
           const response = await fetch(
-            getBackendURL() + `/api/users/${user.id}`,
+            getBackendURL() + `/api/users/${user.userId}`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export const Profile: React.FC = () => {
     if (user) {
       try {
         const response = await fetch(
-          getBackendURL() + `/api/users/${user.id}`,
+          getBackendURL() + `/api/users/${user.userId}`,
           {
             method: "PUT",
             headers: {
