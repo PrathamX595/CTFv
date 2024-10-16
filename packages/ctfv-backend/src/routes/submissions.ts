@@ -72,6 +72,7 @@ submissionRouter.get("/readbychallengeid/:id", authMiddleware, async (c) => {
     const db = getDB(c);
     const result = await db
       .select({
+        userId: schema.submissions.userId,
         username: schema.users.username,
         timestamp: schema.submissions.timestamp,
         challengeName: schema.challenges.name,

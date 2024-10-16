@@ -299,11 +299,13 @@ challengesRouter.get("/personal/:id", authMiddleware, async (c) => {
   try {
     const db = getDB(c);
     const id = c.req.param("id");
+    const isAdmin = c.get("jwtPayload").isAdmin;
 
     const leaderboard = await db
       .select({
         userId: schema.submissions.userId,
         username: schema.users.username,
+        email: schema.users.email,
         totalPoints: sql`SUM(${schema.challenges.points})`.as("totalPoints"),
         lastSubmission: sql`MAX(${schema.submissions.timestamp})`.as(
           "lastSubmission",
@@ -350,6 +352,7 @@ challengesRouter.get("/personal/:id", authMiddleware, async (c) => {
     return c.json({
       rank: userRank,
       username: userData.username,
+      email: isAdmin ? userData.email : "",
       totalPoints: userData.totalPoints,
       solvedChallenges,
     });

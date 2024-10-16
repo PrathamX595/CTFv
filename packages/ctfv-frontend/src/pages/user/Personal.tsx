@@ -22,6 +22,7 @@ type SolvedChallenge = {
 type UserData = {
   rank: number;
   username: string;
+  email: string;
   totalPoints: number;
   solvedChallenges: SolvedChallenge[];
 };
@@ -91,6 +92,9 @@ const Personal: React.FC = () => {
           <div className="mb-8 flex flex-col items-center dark:text-zinc-300">
             <h1 className="mb-2 text-4xl font-bold">{userData.username}</h1>
             <h2 className="mb-2 text-xl">Rank: {userData.rank}</h2>
+            {userData.email && (
+              <h2 className="mb-4 text-xl">Email: {userData.email}</h2>
+            )}
             <h2 className="mb-4 text-xl">
               Total Points: {userData.totalPoints}
             </h2>

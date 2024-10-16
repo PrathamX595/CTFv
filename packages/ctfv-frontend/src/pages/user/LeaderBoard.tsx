@@ -63,6 +63,7 @@ export const LeaderBoard: React.FC = () => {
         );
 
         setLeaderboardData(leaderboard);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error("Error fetching leaderboard:", err);
         setError(

@@ -34,6 +34,7 @@ type CategoryChallenges = {
 };
 
 type Submission = {
+  userId: string;
   username: string;
   timestamp: string;
   challengeName: string;
@@ -342,8 +343,10 @@ export const Challenges: React.FC = () => {
                             <tbody>
                               {submissions.map((submission, index) => (
                                 <tr key={index}>
-                                  <td className="border px-4 py-2">
-                                    {submission.username}
+                                  <td className="border px-4 py-2 text-blue-600 hover:underline dark:text-blue-400">
+                                    <Link to={`/personal/${submission.userId}`}>
+                                      {submission.username}
+                                    </Link>
                                   </td>
                                   <td className="border px-4 py-2">
                                     {new Date(

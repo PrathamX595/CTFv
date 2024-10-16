@@ -33,6 +33,7 @@ const SendEmail = () => {
         const data = await response.json();
         throw new Error(data.error || "Failed to resend verification email");
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setResendStatus("error");
       setError(err.message);
