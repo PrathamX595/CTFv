@@ -268,10 +268,12 @@ challengesRouter.get("/submissions", authMiddleware, async (c) => {
 challengesRouter.get("/leaderboard", authMiddleware, async (c) => {
   try {
     const db = getDB(c);
+    const isAdmin = c.get("jwtPayload").isAdmin;
     const leaderboard = await db
       .select({
         userId: schema.submissions.userId,
         username: schema.users.username,
+        email: schema.users.email,
         totalPoints: sql`SUM(${schema.challenges.points})`.as("totalPoints"),
         lastSubmission: sql`MAX(${schema.submissions.timestamp})`.as(
           "lastSubmission",
@@ -287,6 +289,12 @@ challengesRouter.get("/leaderboard", authMiddleware, async (c) => {
       .groupBy(schema.submissions.userId)
       .orderBy(sql`totalPoints DESC`, sql`lastSubmission ASC`)
       .all();
+
+    if (!isAdmin) {
+      leaderboard.forEach((entry) => {
+        entry.email = "";
+      });
+    }
     return c.json({ leaderboard });
   } catch (e) {
     return c.json({

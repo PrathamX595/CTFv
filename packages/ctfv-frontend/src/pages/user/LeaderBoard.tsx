@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 type User = {
+  email: string;
   rank: number;
   name: string;
   points: number;
@@ -52,13 +53,19 @@ export const LeaderBoard: React.FC = () => {
 
         const leaderboard = data.leaderboard.map(
           (
-            user: { userId: string; username: string; totalPoints: number },
+            user: {
+              userId: string;
+              username: string;
+              totalPoints: number;
+              email: string;
+            },
             index: number,
           ) => ({
             rank: index + 1,
             name: user.username,
             points: user.totalPoints,
             userId: user.userId,
+            email: user.email,
           }),
         );
 
@@ -106,6 +113,7 @@ export const LeaderBoard: React.FC = () => {
             <TableRow>
               <TableHead>Rank</TableHead>
               <TableHead>Name</TableHead>
+              {leaderboardData[0].email && <TableHead>Email</TableHead>}
               <TableHead>Points</TableHead>
             </TableRow>
           </TableHeader>
@@ -123,6 +131,11 @@ export const LeaderBoard: React.FC = () => {
                     {user.name}
                   </Link>
                 </TableCell>
+                {user.email && (
+                  <TableCell className="dark:text-zinc-300">
+                    {user.email}
+                  </TableCell>
+                )}
                 <TableCell className="dark:text-zinc-300">
                   {user.points}
                 </TableCell>
