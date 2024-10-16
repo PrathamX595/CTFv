@@ -11,10 +11,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const EditChallenge: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
   const { getChallenges, updateChallenge } = useAuth();
   const navigate = useNavigate();
 
@@ -26,10 +25,13 @@ export const EditChallenge: React.FC = () => {
   const [author, setAuthor] = useState("");
   const [flag, setFlag] = useState("");
 
+  const id = new URLSearchParams(location.search).get("id");
+
   useEffect(() => {
     const fetchChallenge = async () => {
       try {
         const challenges = await getChallenges();
+        console.log(challenges);
         const challenge = challenges
           .flatMap((c) => c.challenges)
           .find((c) => c.id === id);
