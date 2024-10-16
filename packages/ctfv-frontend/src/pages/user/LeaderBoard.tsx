@@ -1,7 +1,3 @@
-import { Loader2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Table,
@@ -12,6 +8,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getBackendURL } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 type User = {
   rank: number;

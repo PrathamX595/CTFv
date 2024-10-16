@@ -1,6 +1,3 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
 import { useAuth } from "@/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export const CreateChallenge: React.FC = () => {
   const [name, setName] = useState("");

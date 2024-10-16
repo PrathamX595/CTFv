@@ -1,9 +1,3 @@
-import { Loader2 } from "lucide-react";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
-import { useAuth } from "../AuthContext";
-import { Button } from "../components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,6 +7,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import { useAuth } from "../AuthContext";
+import { Button } from "../components/ui/button";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState("");

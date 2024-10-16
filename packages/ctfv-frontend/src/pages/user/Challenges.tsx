@@ -1,16 +1,7 @@
-import { Loader2, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-
 import { useAuth } from "@/AuthContext";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -20,13 +11,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getBackendURL } from "@/lib/utils";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Loader2, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 type Challenge = {
   id: string;
@@ -55,7 +44,7 @@ type Submission = {
 export const Challenges: React.FC = () => {
   const [categories, setCategories] = useState<CategoryChallenges[]>([]);
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
-    null
+    null,
   );
   const [flagInput, setFlagInput] = useState("");
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
@@ -80,13 +69,15 @@ export const Challenges: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           setCategories(data.challenges);
+        } else if (response.status === 401) {
+          setError("To view challenges, please register first.");
         } else {
           setError("Failed to fetch challenges. Please try again later.");
         }
       } catch (error) {
         console.error("Error fetching challenges:", error);
         setError(
-          "An error occurred while fetching challenges. Please try again later."
+          "An error occurred while fetching challenges. Please try again later.",
         );
       } finally {
         setIsLoading(false);
@@ -109,16 +100,18 @@ export const Challenges: React.FC = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
       if (response.ok) {
         const data = await response.json();
         setSubmissions(
           data
             .filter((submission: Submission) => submission.isCorrect)
-            .sort((a: Submission, b: Submission) =>
-              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-            )
+            .sort(
+              (a: Submission, b: Submission) =>
+                new Date(b.timestamp).getTime() -
+                new Date(a.timestamp).getTime(),
+            ),
         );
       } else {
         console.error("Failed to fetch submissions");
@@ -146,7 +139,7 @@ export const Challenges: React.FC = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({ flag: flagInput }),
-        }
+        },
       );
 
       if (response.ok) {
@@ -159,9 +152,9 @@ export const Challenges: React.FC = () => {
               challenges: category.challenges.map((challenge) =>
                 challenge.id === selectedChallenge.id
                   ? { ...challenge, solved: true }
-                  : challenge
+                  : challenge,
               ),
-            }))
+            })),
           );
         } else {
           setSubmissionStatus("incorrect");
@@ -187,9 +180,9 @@ export const Challenges: React.FC = () => {
         prevCategories.map((category) => ({
           ...category,
           challenges: category.challenges.filter(
-            (challenge) => challenge.id !== selectedChallenge.id
+            (challenge) => challenge.id !== selectedChallenge.id,
           ),
-        }))
+        })),
       );
       setSelectedChallenge(null);
     } catch (error) {
@@ -307,9 +300,7 @@ export const Challenges: React.FC = () => {
                         <div className="my-4">
                           <Input
                             value={flagInput}
-                            onChange={(e) =>
-                              setFlagInput(e.target.value)
-                            }
+                            onChange={(e) => setFlagInput(e.target.value)}
                             placeholder="Enter flag"
                           />
                           <Button
@@ -343,7 +334,7 @@ export const Challenges: React.FC = () => {
                     </TabsContent>
 
                     <TabsContent value="submissions">
-                    <div className="max-h-96 overflow-auto">
+                      <div className="max-h-96 overflow-auto">
                         {submissions.length === 0 ? (
                           <p>No submissions found.</p>
                         ) : (
@@ -362,7 +353,7 @@ export const Challenges: React.FC = () => {
                                   </td>
                                   <td className="border px-4 py-2">
                                     {new Date(
-                                      submission.timestamp
+                                      submission.timestamp,
                                     ).toLocaleString()}
                                   </td>
                                 </tr>

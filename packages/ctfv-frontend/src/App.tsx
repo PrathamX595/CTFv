@@ -1,6 +1,3 @@
-import React from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-
 import { AuthProvider, useAuth } from "@/AuthContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { Login } from "@/pages/Login";
@@ -17,6 +14,8 @@ import Personal from "@/pages/user/Personal";
 import { Profile } from "@/pages/user/Profile";
 import { Teams } from "@/pages/user/Teams";
 import { Users } from "@/pages/user/Users";
+import React from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();

@@ -1,3 +1,12 @@
+import { useAuth } from "@/AuthContext";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Flag,
   LogIn,
@@ -14,16 +23,6 @@ import {
 } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
-
-import { useAuth } from "@/AuthContext";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface NavbarProps {
   toggleDarkMode: () => void;
