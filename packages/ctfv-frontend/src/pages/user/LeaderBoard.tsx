@@ -41,6 +41,9 @@ export const LeaderBoard: React.FC = () => {
         );
 
         if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error("Login to view the leaderboard");
+          }
           throw new Error("Failed to fetch leaderboard");
         }
 
@@ -59,10 +62,10 @@ export const LeaderBoard: React.FC = () => {
         );
 
         setLeaderboardData(leaderboard);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error fetching leaderboard:", err);
         setError(
-          "An error occurred while fetching the leaderboard. Please try again later.",
+          "Error fetching leaderboard: " + (err.message || "An error occurred"),
         );
       } finally {
         setIsLoading(false);

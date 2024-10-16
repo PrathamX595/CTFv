@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { JwtVariables } from "hono/jwt";
 
@@ -84,7 +84,8 @@ submissionRouter.get("/readbychallengeid/:id", authMiddleware, async (c) => {
         schema.challenges,
         eq(schema.submissions.challengeId, schema.challenges.id),
       )
-      .where(eq(schema.challenges.id, challengeId));
+      .where(eq(schema.challenges.id, challengeId))
+      .orderBy(sql`timestamp ASC`);
 
     return c.json(result);
   } catch (e) {

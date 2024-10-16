@@ -107,11 +107,6 @@ export const Challenges: React.FC = () => {
         setSubmissions(
           data
             .filter((submission: Submission) => submission.isCorrect)
-            .sort(
-              (a: Submission, b: Submission) =>
-                new Date(b.timestamp).getTime() -
-                new Date(a.timestamp).getTime(),
-            ),
         );
       } else {
         console.error("Failed to fetch submissions");
