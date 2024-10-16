@@ -43,8 +43,9 @@ export const LeaderBoard: React.FC = () => {
         if (!response.ok) {
           if (response.status === 401) {
             throw new Error("Login to view the leaderboard");
+          } else {
+            throw new Error("Failed to fetch leaderboard");
           }
-          throw new Error("Failed to fetch leaderboard");
         }
 
         const data = await response.json();

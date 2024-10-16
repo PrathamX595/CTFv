@@ -105,8 +105,7 @@ export const Challenges: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         setSubmissions(
-          data
-            .filter((submission: Submission) => submission.isCorrect)
+          data.filter((submission: Submission) => submission.isCorrect),
         );
       } else {
         console.error("Failed to fetch submissions");
