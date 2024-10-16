@@ -374,12 +374,6 @@ export const Challenges: React.FC = () => {
                       </div>
                     </TabsContent>
                   </Tabs>
-
-                  <DialogFooter>
-                    <Button onClick={() => setSelectedChallenge(null)}>
-                      Close
-                    </Button>
-                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             ))}
