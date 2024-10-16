@@ -15,7 +15,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getBackendURL } from "@/lib/utils";
 import { Loader2, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import Markdown from "react-markdown";
 import { Link } from "react-router-dom";
+import remarkGfm from "remark-gfm";
 
 type Challenge = {
   id: string;
@@ -240,7 +242,19 @@ export const Challenges: React.FC = () => {
 
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>{selectedChallenge?.name}</DialogTitle>
+                    <DialogTitle>
+                      <h2 className="text-2xl font-semibold">
+                        {selectedChallenge?.name}
+                      </h2>
+                    </DialogTitle>
+                    <div className="flex space-x-4">
+                      <p>
+                        <strong>Points:</strong> {selectedChallenge?.points}
+                      </p>
+                      <p>
+                        <strong>Author:</strong> {selectedChallenge?.author}
+                      </p>
+                    </div>
                   </DialogHeader>
 
                   <Tabs defaultValue="details">
@@ -251,16 +265,21 @@ export const Challenges: React.FC = () => {
 
                     <TabsContent value="details">
                       <DialogDescription>
-                        <p>{selectedChallenge?.description}</p>
-                        <p>
-                          <strong>Points:</strong> {selectedChallenge?.points}
-                        </p>
-                        <p>
-                          <strong>Author:</strong> {selectedChallenge?.author}
-                        </p>
+                        <Markdown
+                          remarkPlugins={[remarkGfm]}
+                          className="mb-2 text-lg"
+                        >
+                          {selectedChallenge?.description}
+                        </Markdown>
                         <p>
                           <strong>Challenge Link:</strong>{" "}
-                          {selectedChallenge?.url}
+                          <a
+                            href={selectedChallenge?.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {selectedChallenge?.url}
+                          </a>
                         </p>
                         {user?.isAdmin && (
                           <>

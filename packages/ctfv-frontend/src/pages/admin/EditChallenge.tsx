@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -109,9 +110,8 @@ export const EditChallenge: React.FC = () => {
             >
               Description
             </label>
-            <Input
+            <Textarea
               id="description"
-              type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter a description"
