@@ -18,7 +18,7 @@ const challengesRouter = new Hono<{
 challengesRouter.post("/create", authMiddleware, adminMiddleware, async (c) => {
   try {
     const db = getDB(c);
-    const { name, description, url, points, author, category, flag } =
+    const { name, description, url, points, author, category, flag, date } =
       await c.req.json();
     const newChallenge = await db
       .insert(schema.challenges)
@@ -30,6 +30,7 @@ challengesRouter.post("/create", authMiddleware, adminMiddleware, async (c) => {
         category,
         description,
         flag,
+        date,
       })
       .returning()
       .get();
@@ -76,6 +77,7 @@ challengesRouter.get("/read", authMiddleware, async (c) => {
           author: challenge.author,
           flag: c.get("jwtPayload").isAdmin ? challenge.flag : null,
           solved: solvedChallengeIds.has(challenge.id),
+          date: challenge.date,
         });
         return acc;
       },
@@ -106,12 +108,12 @@ challengesRouter.put(
   async (c) => {
     try {
       const db = getDB(c);
-      const { name, description, url, points, author, category } =
+      const { name, description, url, points, author, category, date } =
         await c.req.json();
       const challengeId = c.req.param("id");
       const updatedChallenge = await db
         .update(schema.challenges)
-        .set({ name, description, url, points, author, category })
+        .set({ name, description, url, points, author, category, date })
         .where(eq(schema.challenges.id, challengeId))
         .returning({
           id: schema.challenges.id,
@@ -122,6 +124,7 @@ challengesRouter.put(
           author: schema.challenges.author,
           category: schema.challenges.category,
           flag: schema.challenges.flag,
+          date: schema.challenges.date,
         });
 
       if (!updatedChallenge) {

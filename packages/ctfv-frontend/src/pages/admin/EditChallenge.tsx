@@ -24,6 +24,7 @@ export const EditChallenge: React.FC = () => {
   const [points, setPoints] = useState(0);
   const [category, setCategory] = useState("web");
   const [author, setAuthor] = useState("");
+  const [date, setDate] = useState("");
   const [flag, setFlag] = useState("");
 
   const id = new URLSearchParams(location.search).get("id");
@@ -45,6 +46,7 @@ export const EditChallenge: React.FC = () => {
           setCategory(challenge.category);
           setAuthor(challenge.author);
           setFlag(challenge.flag || "");
+          setDate(challenge.date || "");
         }
       } catch (error) {
         console.error("Failed to fetch challenge:", error);
@@ -67,6 +69,7 @@ export const EditChallenge: React.FC = () => {
         category,
         author,
         flag,
+        date,
       });
       navigate("/challenges");
     } catch (error) {
@@ -189,6 +192,23 @@ export const EditChallenge: React.FC = () => {
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               placeholder="Enter the author's name"
+              required
+              className="w-full"
+            />
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="date"
+              className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            >
+              Date
+            </label>
+            <Input
+              id="date"
+              type="text"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              placeholder="Enter the date"
               required
               className="w-full"
             />

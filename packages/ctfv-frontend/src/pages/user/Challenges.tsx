@@ -26,6 +26,7 @@ type Challenge = {
   url: string;
   points: number;
   author: string;
+  date: string;
   flag: string | null;
   solved: boolean;
 };
@@ -233,6 +234,7 @@ export const Challenges: React.FC = () => {
                   >
                     <CardHeader>
                       <CardTitle>{challenge.name}</CardTitle>
+                      <p className="text-sm">{challenge.date}</p>
                     </CardHeader>
                     <CardContent>
                       <p>{challenge.points} points</p>

@@ -36,6 +36,7 @@ export const challenges = sqliteTable("challenges", {
   }).notNull(),
   author: text("author").notNull(),
   flag: text("flag").notNull(),
+  date: text("date"),
 });
 
 export const submissions = sqliteTable("submissions", {

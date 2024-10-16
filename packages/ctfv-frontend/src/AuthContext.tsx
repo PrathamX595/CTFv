@@ -19,6 +19,7 @@ interface Challenge {
   points: number;
   category: string;
   author: string;
+  date?: string;
   flag?: string | null; // The flag is only visible to admins
 }
 
