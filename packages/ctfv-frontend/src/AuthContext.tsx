@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { getBackendURL } from "./lib/utils";
 
-interface User {
+export interface User {
   userId: string;
   email: string;
   username: string;
@@ -11,7 +11,7 @@ interface User {
   emailVerified: boolean;
 }
 
-interface Challenge {
+export interface Challenge {
   id: string;
   name: string;
   description: string;
