@@ -57,12 +57,34 @@ export const Navbar: React.FC<NavbarProps> = ({
     <nav className="bg-white p-4 dark:bg-zinc-800">
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
-          <Link
-            className="text-2xl font-bold text-zinc-900 dark:text-zinc-100"
-            to="/"
-          >
-            CTFv
-          </Link>
+          <div className="flex items-center space-x-4">
+            <Link
+              className="text-2xl font-bold text-zinc-900 dark:text-zinc-100"
+              to="/"
+            >
+              CTFv
+            </Link>
+
+            {/* Left-side navigation items (visible on md and above) */}
+            <div className="hidden items-center space-x-4 md:flex">
+              <NavLink to="/users" icon={<UserIcon size={20} />}>
+                Users
+              </NavLink>
+              <NavLink to="/teams" icon={<Users size={20} />}>
+                Teams
+              </NavLink>
+              <NavLink to="/leaderboard" icon={<Trophy size={20} />}>
+                Leaderboard
+              </NavLink>
+              {user?.isAdmin ? (
+                <AdminMenu />
+              ) : (
+                <NavLink to="/challenges" icon={<Flag size={20} />}>
+                  Challenges
+                </NavLink>
+              )}
+            </div>
+          </div>
 
           {/* Mobile menu button */}
           <button
@@ -72,24 +94,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
-          {/* Desktop navigation */}
+          {/* Right-side navigation items (visible on md and above) */}
           <div className="hidden items-center space-x-4 md:flex">
-            <NavLink to="/users" icon={<UserIcon size={20} />}>
-              Users
-            </NavLink>
-            <NavLink to="/teams" icon={<Users size={20} />}>
-              Teams
-            </NavLink>
-            <NavLink to="/leaderboard" icon={<Trophy size={20} />}>
-              Leaderboard
-            </NavLink>
-            {user?.isAdmin ? (
-              <AdminMenu />
-            ) : (
-              <NavLink to="/challenges" icon={<Flag size={20} />}>
-                Challenges
-              </NavLink>
-            )}
             <UserMenu user={user!} logout={logout} />
             <DarkModeToggle
               toggleDarkMode={toggleDarkMode}

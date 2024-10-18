@@ -394,7 +394,9 @@ export const Challenges: React.FC = () => {
                   <Tabs defaultValue="details">
                     <TabsList>
                       <TabsTrigger value="details">Details</TabsTrigger>
-                      <TabsTrigger value="submissions">Submissions</TabsTrigger>
+                      <TabsTrigger value="submissions">
+                        Submissions ({submissions.length})
+                      </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="details">
