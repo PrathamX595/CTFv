@@ -1,1 +1,4 @@
 AUTH_SECRET=your_secret_here
+MAILGUN_API_KEY=your_apikey_here
+MAILGUN_DOMAIN=your_domain_here
+FRONTEND_URL=your_frontend_url_here
